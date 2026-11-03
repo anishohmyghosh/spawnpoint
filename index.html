@@ -1,0 +1,1495 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<meta charset="utf-8">
+<title>Spawnpoint</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: inputs on a narrow left rail; the blueprint (same interface as the website section) reads down the right. */
+:root{
+  --paper:#f5f0e6; --surface:#fbf8f1; --ink:#2a2a24; --muted:#6d695d; --line:#e3dac8;
+  --accent:#5d7a4f; --accent-soft:#e4ead9; --chord:#b8683c; --clay:#b8683c; --radius:18px;
+  --display:"Fraunces",Georgia,serif;
+  --body:"DM Sans",system-ui,-apple-system,sans-serif;
+  --mono:"DM Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#1a1a16; --surface:#23221d; --ink:#ece6d8; --muted:#a59f8f; --line:#36332b;
+  --accent:#9cb98a; --accent-soft:#2c3527; --chord:#e09a6d; --clay:#e09a6d; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#1a1a16; --surface:#23221d; --ink:#ece6d8; --muted:#a59f8f; --line:#36332b;
+  --accent:#9cb98a; --accent-soft:#2c3527; --chord:#e09a6d; --clay:#e09a6d; color-scheme:dark}
+
+body{background:var(--paper);color:var(--ink);font:16px/1.55 var(--body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 56px}
+.wrap{max-width:1180px;margin:0 auto;display:grid;gap:32px}
+@media (min-width:920px){.wrap{grid-template-columns:330px minmax(0,1fr);align-items:start}
+  aside{position:sticky;top:calc(env(safe-area-inset-top,0px) + 20px);max-height:calc(100vh - 40px);overflow:auto}}
+h1,h2,h3{font-family:var(--display);font-weight:400;text-wrap:balance;margin:0}
+.eyebrow{font:500 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+
+/* inputs */
+aside{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px 20px;display:grid;gap:18px}
+aside h1{font-size:30px;line-height:1.1}
+aside p.lede{margin:6px 0 0;color:var(--muted);font-size:14px}
+fieldset{border:0;padding:0;margin:0;display:grid;gap:12px}
+legend{padding:0;margin-bottom:10px}
+.field{display:grid;gap:5px;min-width:0}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label{font-size:13px;font-weight:600}
+input,select{font:15px var(--body);color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:8px 10px;width:100%;box-sizing:border-box;min-width:0}
+input:focus-visible,select:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.auto{font:13px var(--mono);color:var(--muted)}
+.auto b{color:var(--ink);font-weight:500}
+.hint{font-size:12.5px;color:var(--muted);margin:0}
+.hint a{color:var(--chord)}
+.check{display:flex;gap:8px;align-items:center;font-weight:400;font-size:13.5px}
+.check input{width:auto}
+.combo-box{position:relative}
+#city-list{position:absolute;z-index:5;left:0;right:0;top:calc(100% + 4px);max-height:260px;overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:4px;margin:0;padding:4px;list-style:none;box-shadow:0 8px 24px rgba(10,14,30,.18)}
+#city-list li{padding:7px 9px;border-radius:3px;cursor:pointer;font-size:14px;display:flex;justify-content:space-between;gap:10px}
+#city-list li small{color:var(--muted);font-size:12px;white-space:nowrap}
+#city-list li[aria-selected="true"],#city-list li:hover{background:var(--accent-soft)}
+#city-list li.none{cursor:default;color:var(--muted)}
+.cityok{font:12px var(--mono);color:var(--muted);min-height:1em}
+.cityok.miss{color:var(--chord)}
+details summary{cursor:pointer;font-size:13px;color:var(--chord);margin-bottom:8px}
+details[open]{display:grid;gap:10px}
+.calcnote{margin:0;font-size:13px;color:var(--muted);border-left:2px solid var(--accent);padding-left:10px}
+.calcnote.warn{border-left-color:var(--chord);color:var(--ink)}
+button.reset{font:600 13px var(--body);background:none;border:1px solid var(--line);color:var(--muted);border-radius:4px;padding:8px 12px;cursor:pointer;justify-self:start}
+button.reset:hover{color:var(--ink);border-color:var(--muted)}
+
+/* output: the blueprint (same interface as the website section) */
+main{display:grid;gap:24px;min-width:0;container-type:inline-size}
+.banner{font-size:14px;background:var(--accent-soft);border:1px dashed var(--accent);border-radius:10px;padding:10px 14px}
+.empty{color:var(--muted);font-size:17px}
+.hdr h2{font-size:clamp(30px,4.4vw,44px);line-height:1.1;margin-top:8px}
+.hdr .lead{margin:10px 0 0;max-width:46rem;color:var(--muted)}
+.sm-night{--n-bg:#1f271c;--n-ink:#efe8d6;--n-muted:#a9b29a;--n-line:rgba(239,232,214,.16);--n-gold:#e2b86a;--n-sage:#a9c793;
+  position:relative;overflow:hidden;border-radius:28px;color:var(--n-ink);
+  background:radial-gradient(120% 90% at 30% 20%,#2e3a29 0%,var(--n-bg) 60%,#161c14 100%);padding:clamp(1rem,3vw,2.25rem)}
+.sm-stars{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.sm-grid{position:relative;display:grid;gap:1.5rem;align-items:center}
+@container (min-width:1000px){.sm-grid{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)}}
+.sm-wheel svg{display:block;width:100%;max-width:620px;height:auto;margin:0 auto;overflow:visible}
+.sm-wheel text{font-family:var(--body)}
+.ring{fill:none;stroke:var(--n-line)}
+.tick{stroke:var(--n-line)}
+.sm-ring{transform-origin:260px 260px;animation:sm-spin 240s linear infinite}
+@keyframes sm-spin{to{transform:rotate(360deg)}}
+.orbit .track{fill:none;stroke:var(--n-line);stroke-width:1;stroke-dasharray:1 5;opacity:.6}
+.orbit .arc,.orbit .spoke{fill:none;stroke:var(--n-sage);stroke-width:1.2;stroke-linecap:round;stroke-dasharray:1;opacity:.28;transition:opacity .3s,stroke .3s}
+.orbit .spoke{opacity:0}
+.orbit .joint{fill:var(--n-gold);opacity:0;transition:opacity .3s}
+.orbit.on .arc,.orbit.on .spoke{stroke:var(--n-gold);stroke-width:1.8;opacity:1;animation:sm-draw .9s cubic-bezier(.3,.7,.2,1) both}
+.orbit.on .spoke{animation-duration:.5s}
+.orbit.on .joint{opacity:1;transition-delay:.4s}
+@keyframes sm-draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+.core{fill:#161c14;stroke:var(--n-gold);stroke-width:1.4}
+.core-t{fill:var(--n-ink);font-family:var(--display)!important;font-size:21px}
+.node{cursor:pointer;outline:none}
+.sm-night.fresh .node{animation:sm-pop .6s var(--d) cubic-bezier(.2,.8,.2,1.2) both}
+@keyframes sm-pop{from{opacity:.3}to{opacity:1}}
+.node .halo{fill:var(--n-gold);opacity:0;transition:opacity .3s}
+.node .dot{fill:#253021;stroke:var(--n-muted);stroke-width:1.2;transition:fill .3s,stroke .3s}
+.node .mark{fill:var(--n-ink);font-size:17px;pointer-events:none}
+.node .mark.small{font-size:12px;font-weight:600}
+.node .lab-s{fill:var(--n-muted);font-size:10px;letter-spacing:.1em}
+.node .lab-v{fill:var(--n-ink);font-size:14px;font-weight:600}
+.node:hover .dot,.node:focus-visible .dot{stroke:var(--n-gold)}
+.node:focus-visible .halo{opacity:.25}
+.node.lit .dot{fill:#3b4a33;stroke:var(--n-sage)}
+.node.lit .halo{fill:var(--n-sage);opacity:.18}
+.node.on .dot{fill:var(--n-gold);stroke:var(--n-gold)}
+.node.on .mark{fill:#1f271c}
+.node.on .halo{opacity:.22;animation:sm-pulse 2.4s ease-in-out infinite}
+@keyframes sm-pulse{50%{opacity:.05}}
+.sm-side{position:relative;display:grid;gap:1.25rem;min-width:0}
+@container (min-width:640px) and (max-width:999px){.sm-side{grid-template-columns:1fr 1fr;align-items:start}}
+.sm-card{background:rgba(239,232,214,.06);border:1px solid var(--n-line);border-radius:18px;padding:1.4rem 1.5rem;min-height:12rem;backdrop-filter:blur(4px)}
+.sm-card.swap{animation:sm-in .45s cubic-bezier(.2,.7,.2,1)}
+@keyframes sm-in{from{transform:translateY(8px);opacity:.4}}
+.sm-sys{margin:0;font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:var(--n-muted)}
+.sm-val{margin:.35rem 0 .1rem;font-family:var(--display);font-size:clamp(1.6rem,3vw,2.2rem);color:var(--n-ink);line-height:1.15}
+.sm-title{margin:0 0 .6rem;color:var(--n-gold);font-weight:600}
+.sm-text{margin:0;color:var(--n-ink);opacity:.9}
+.sm-themes{display:grid;gap:.5rem}
+.sm-theme{display:grid;grid-template-columns:2.2rem 1fr;gap:.75rem;align-items:start;text-align:left;font:inherit;color:var(--n-ink);background:transparent;border:1px solid var(--n-line);border-radius:14px;padding:.7rem .9rem;cursor:pointer;transition:background .25s,border-color .25s,transform .2s}
+.sm-theme:hover{background:rgba(239,232,214,.06);transform:translateX(3px)}
+.sm-theme[aria-pressed="true"]{border-color:var(--n-sage);background:rgba(169,199,147,.12)}
+.sm-theme:focus-visible,.sm-tablist button:focus-visible{outline:2px solid var(--n-gold);outline-offset:2px}
+.sm-theme .cnt{font-family:var(--display);font-size:1.6rem;line-height:1;color:var(--n-sage);text-align:right}
+.sm-theme b{display:block;font-size:.98rem}
+.sm-theme .tx{display:block;font-size:.85rem;color:var(--n-muted);line-height:1.4}
+.sm-thesis{position:relative;margin:1.5rem auto 0;max-width:40rem;text-align:center;font-family:var(--display);font-size:clamp(1.15rem,2.2vw,1.45rem);line-height:1.35;color:var(--n-ink);text-wrap:balance}
+.sm-thesis em{font-style:normal;color:var(--n-gold)}
+
+.sm-trio{display:grid;gap:1.25rem}
+@container (min-width:640px){.sm-trio{grid-template-columns:1fr 1fr}.sm-trio .sm-bg{grid-column:1/-1;order:3}}
+@container (min-width:980px){.sm-trio{grid-template-columns:1fr 1.3fr 1fr}.sm-trio .sm-bg{grid-column:auto;order:0}}
+.sm-panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:1.3rem 1.4rem;min-width:0}
+.sm-k{display:block;margin:0 0 .8rem;font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.sm-nums{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem}
+.sm-nums div{display:grid;gap:.15rem;align-content:start}
+.sm-nums b{font-family:var(--display);font-size:2.6rem;line-height:1;color:var(--clay);font-weight:500}
+.sm-nums span{font-weight:600;font-size:.9rem}
+.sm-nums small{color:var(--muted);font-size:.8rem;line-height:1.35}
+.sm-bgrow{display:grid;grid-template-columns:clamp(110px,22cqi,150px) 1fr;gap:1rem;align-items:center}
+.sm-bgrow svg{width:100%;height:auto}
+.bg-lines line{stroke:var(--line);stroke-width:3}
+.bg-ch line{stroke:var(--clay);stroke-width:5;stroke-linecap:round}
+.c{fill:var(--surface);stroke:var(--muted);stroke-width:1.5}
+.c.on{fill:#d9a94e;stroke:#b98a30}
+.c.on.motor{fill:var(--clay);stroke:var(--clay)}
+.sm-strong{margin:0 0 .3rem;font-weight:600}
+.sm-small{margin:0 0 .4rem;color:var(--muted);font-size:.88rem;line-height:1.45}
+.sm-els{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-bottom:.8rem}
+.el{display:grid;justify-items:center;gap:.35rem;font-size:.82rem;font-weight:600}
+.orb{width:2.6rem;height:2.6rem;border-radius:999px;border:1.5px solid var(--c);background:radial-gradient(circle at 35% 30%,color-mix(in srgb,var(--c) calc(var(--f) * 100%),transparent),transparent 75%),color-mix(in srgb,var(--c) calc(var(--f) * 45%),transparent)}
+.el-fire{--c:#c8643a}.el-earth{--c:#7d8f4e}.el-air{--c:#8aa6b8}.el-water{--c:#4f7a9a}
+.el.zero .orb{border-style:dashed}
+
+.sm-tabs{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.sm-tablist{display:flex;overflow-x:auto;border-bottom:1px solid var(--line);scrollbar-width:none}
+.sm-tablist button{--n-gold:var(--accent);flex:none;font:600 .95rem var(--body);color:var(--muted);background:none;border:0;border-bottom:3px solid transparent;padding:.9rem 1.1rem;cursor:pointer;transition:color .2s,border-color .2s}
+.sm-tablist button:hover{color:var(--ink)}
+.sm-tablist button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--clay)}
+.sm-tabpanel{padding:1.3rem 1.4rem 1.5rem;animation:sm-in .4s ease;display:grid;gap:.7rem}
+.sm-tabpanel[hidden]{display:none}
+.sm-tabpanel p{margin:0;max-width:46rem;font-size:1.05rem}
+.sm-tabpanel .src{font:12px var(--mono);color:var(--muted);letter-spacing:.04em}
+.sm-chips{list-style:none;padding:0;margin:0 0 .3rem;display:flex;flex-wrap:wrap;gap:.5rem}
+.sm-chips li{padding:.35rem .85rem;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-weight:600;font-size:.88rem}
+.sm-list{margin:0;padding:0;list-style:none;display:grid;gap:12px;max-width:46rem}
+.sm-list li{padding-left:14px;border-left:2px solid var(--clay)}
+.sm-list li span{display:block;font:11.5px var(--mono);color:var(--muted);letter-spacing:.04em}
+
+.sm-season{display:flex;flex-wrap:wrap;gap:1.25rem 2.5rem;align-items:end;padding:1.3rem 1.4rem;border-radius:var(--radius);background:var(--accent-soft)}
+.sm-season > div{display:grid;gap:.2rem}
+.sm-season .sm-k{margin:0}
+.sm-season b{font-family:var(--display);font-size:2.6rem;line-height:1;color:var(--accent);font-weight:500}
+.sm-season b.word{font-size:1.6rem;line-height:1.6}
+.sm-season .t{font-weight:600}
+.py-d{flex:1 1 18rem;margin:0;color:var(--ink)}
+.py-d small{display:block;margin-top:.4rem;color:var(--muted);font-size:.9rem}
+.foot{font-size:13px;color:var(--muted);max-width:64ch;margin:0}
+@media (max-width:640px){.sm-night{padding:1rem .6rem 1.4rem}.node .lab-s{font-size:14px}.node .lab-v{font-size:18px}.node .mark{font-size:21px}.node .mark.small{font-size:15px}.core-t{font-size:24px}}
+@media (max-width:520px){.sm-bgrow{grid-template-columns:90px 1fr}.sm-nums b{font-size:2.1rem}}
+aside h1.spawn{display:flex;align-items:center;gap:14px;font-size:38px;font-weight:600;letter-spacing:-.01em;line-height:1.05;padding:6px 0 2px}
+.sp-word{background:linear-gradient(100deg,var(--ink) 0%,var(--ink) 38%,#d9a94e 46%,var(--clay) 50%,var(--accent) 54%,var(--ink) 62%,var(--ink) 100%);background-size:260% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sp-shine 6s ease-in-out infinite}
+@keyframes sp-shine{0%,20%{background-position:100% 0}70%,100%{background-position:0 0}}
+.beacon{position:relative;flex:none;width:14px;height:14px;border-radius:50%;background:radial-gradient(circle,#f3d58e 0 30%,#d9a94e 60%,var(--clay) 100%);box-shadow:0 0 12px rgba(217,169,78,.7)}
+.beacon::before,.beacon::after{content:"";position:absolute;inset:-2px;border-radius:50%;border:1.5px solid #d9a94e;animation:sp-ring 2.6s cubic-bezier(.2,.6,.3,1) infinite}
+.beacon::after{animation-delay:1.3s}
+@keyframes sp-ring{from{transform:scale(1);opacity:.9}to{transform:scale(3.4);opacity:0}}
+@media (max-width:919px){body.is-empty main{order:-1}.wrap{display:flex;flex-direction:column}}
+.spawn-empty{min-width:0;display:grid;gap:18px;padding:8px 0 4px}
+.se-lead{margin:0;font-family:var(--display);font-size:clamp(26px,3.6vw,38px);line-height:1.15}
+.se-lead em{font-style:normal;color:var(--clay)}
+.se-sub{margin:0;color:var(--muted)}
+.mq-wrap{position:relative;min-width:0}
+.mq-arrow{position:absolute;top:50%;z-index:2;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;border:1px solid #e2b86a;background:#1f271c;color:#e2b86a;font-size:20px;line-height:1;cursor:pointer;display:grid;place-items:center;box-shadow:0 6px 16px rgba(20,28,18,.3);transition:transform .2s,background .2s}
+.mq-arrow:hover{background:#2e3a29;transform:translateY(-50%) scale(1.08)}
+.mq-arrow:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mq-arrow.prev{left:-6px}.mq-arrow.next{right:-6px}
+.marquee{overflow-x:auto;scrollbar-width:none;padding:10px 0;-webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent)}
+.marquee::-webkit-scrollbar{display:none}
+.mq-track{display:flex;width:max-content}
+.fig-card .tu{color:#e2b86a;opacity:.8}
+.fig-card{flex:none;width:208px;margin-right:14px;display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:center;text-align:left;font:inherit;color:#efe8d6;cursor:pointer;
+  background:radial-gradient(120% 120% at 20% 10%,#2e3a29 0%,#1f271c 65%,#161c14 100%);border:1px solid rgba(239,232,214,.14);border-radius:18px;padding:14px;transition:transform .25s,border-color .25s,box-shadow .25s}
+.fig-card:hover,.fig-card:focus-visible{transform:translateY(-4px);border-color:#e2b86a;box-shadow:0 10px 24px rgba(20,28,18,.25);outline:none}
+.fig-card .gl{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:20px;border:1.2px solid #e2b86a;color:#e2b86a;background:rgba(226,184,106,.08)}
+.fig-card b{display:block;font-family:var(--display);font-weight:500;font-size:17px;line-height:1.15}
+.fig-card small{display:block;color:#a9b29a;font-size:12.5px;margin-top:2px}
+.spawn-more summary{color:var(--accent);font-weight:600;font-size:14px}
+.backlink{font:inherit;letter-spacing:inherit;text-transform:inherit;color:var(--clay);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.sm-night.ghost .node{cursor:default}
+.sm-night.ghost .node .dot{stroke-dasharray:3 4;fill:transparent}
+.sm-night.ghost .node .mark{fill:var(--n-muted)}
+.ghost-legend{display:grid;gap:12px}
+.ghost-legend div{border-left:2px solid var(--n-gold);padding-left:12px}
+.ghost-legend b{display:block;color:var(--n-ink);font-weight:600}
+.ghost-legend span{color:var(--n-muted);font-size:.9rem}
+.bg-read{margin:.7rem 0 0;font-size:.85rem;color:var(--muted);line-height:1.45}
+.bg-read i{font-style:normal;display:inline-block;width:.7rem;height:.7rem;border-radius:2px;vertical-align:-1px;margin-right:3px}
+.bg-toggle{margin-top:.8rem;font:600 14px var(--body);color:var(--clay);background:none;border:1px solid var(--clay);border-radius:999px;padding:7px 14px;cursor:pointer}
+.bg-toggle:hover{background:color-mix(in srgb,var(--clay) 10%,transparent)}
+.bg-explore{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:1.3rem 1.4rem;display:grid;gap:1.4rem;animation:sm-in .4s ease}
+@container (min-width:760px){.bg-explore{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}}
+.bgx-head{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:.4rem 1.2rem;align-items:baseline;justify-content:space-between}
+.bgx-head h3{font-size:1.5rem}
+.bgx-legend{display:flex;flex-wrap:wrap;gap:.3rem 1rem;font-size:.82rem;color:var(--muted)}
+.bgx-legend span{display:inline-flex;align-items:center;gap:6px}
+.bgx-legend i{width:12px;height:12px;border-radius:50%;display:inline-block;border:1px solid var(--muted)}
+.bgx-svg svg{width:100%;max-width:470px;height:auto;display:block;margin:0 auto}
+.bgx .cx{cursor:pointer;stroke:#b9b09c;stroke-width:1.2;fill:var(--surface);transition:fill .2s,stroke .2s}
+.bgx .cx.on{fill:#ecc36a;stroke:#c99a3c}
+.bgx .cx.on.motor{fill:#d68858;stroke:#b06a3e}
+.bgx .cx:hover{stroke:var(--accent)}
+.bgx .cl{font:600 6.4px var(--body);letter-spacing:.08em;text-transform:uppercase;fill:#9a927f;text-anchor:middle;pointer-events:none}
+.bgx .cl.on{fill:#5b4420}
+.bgx .ch{fill:none;stroke:#e6ddca;stroke-width:4.2;stroke-linecap:round}
+.bgx .half{fill:none;stroke-width:4.2;stroke-linecap:round}
+.bgx .half.p{stroke:#2a2a24}.bgx .half.d{stroke:#c0473a}.bgx .half.b{stroke:#d9a94e}.bgx .half.x{stroke:var(--accent)}
+.bgx .hit{fill:none;stroke:transparent;stroke-width:11;cursor:pointer}
+.bgx .gt{cursor:pointer}
+.bgx .gt text{font:600 6.2px var(--mono);text-anchor:middle;pointer-events:none}
+.bgx .gt.off circle{fill:transparent;stroke:none}.bgx .gt.off text{fill:#a39b88}.bgx .gt.off.indef text{fill:#6b5128}
+.bgx .gt.off:hover circle{fill:rgba(93,122,79,.15)}
+.bgx .gt.p circle{fill:#2a2a24}.bgx .gt.d circle{fill:#c0473a}.bgx .gt.b circle{fill:#d9a94e}.bgx .gt.x circle{fill:var(--accent)}
+.bgx .gt.p text,.bgx .gt.d text,.bgx .gt.x text{fill:#fff}.bgx .gt.b text{fill:#2a2118}
+.bgx .gt:not(.off) circle{stroke:var(--surface);stroke-width:1}
+.bgx .sel{stroke:var(--accent)!important;stroke-width:2.2!important}
+.bgx path.ch.sel{stroke:#b9d2a6!important;stroke-width:7!important}
+.bgx :focus-visible{outline:none}.bgx .gt:focus-visible circle,.bgx .cx:focus-visible{stroke:var(--accent);stroke-width:2.2}
+.bgx-card{display:grid;gap:.6rem;align-content:start;min-width:0}
+.bgx-card .k{font:11px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0}
+.bgx-card h4{margin:0;font-family:var(--display);font-weight:400;font-size:1.6rem;line-height:1.15}
+.bgx-card .tag{display:inline-block;font:600 12px var(--body);padding:3px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent);margin-right:6px}
+.bgx-card .tag.open{background:transparent;border:1px dashed var(--muted);color:var(--muted)}
+.bgx-card p{margin:0;font-size:.98rem}
+.bgx-card ul{margin:0;padding-left:1.1rem;display:grid;gap:.35rem;font-size:.95rem}
+.bgx-card .muted{color:var(--muted);font-size:.88rem}
+.bgx-card button.lnk{font:inherit;color:var(--clay);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.exporting .bg-toggle{display:none}
+@media print{.bg-toggle{display:none}}
+.playbtn{margin-top:14px;display:inline-flex;align-items:center;gap:10px;font:600 15px var(--body);color:#1f271c;background:linear-gradient(135deg,#f0cf85,#d9a94e);border:0;border-radius:999px;padding:10px 20px 10px 14px;cursor:pointer;box-shadow:0 6px 18px rgba(185,138,48,.35);transition:transform .2s}
+.playbtn:hover{transform:translateY(-2px)}
+.playbtn .tri{width:26px;height:26px;border-radius:50%;background:#1f271c;display:grid;place-items:center}
+.playbtn .tri::after{content:"";border-left:9px solid #e2b86a;border-top:6px solid transparent;border-bottom:6px solid transparent;margin-left:3px}
+.exporting .playbtn{display:none}@media print{.playbtn{display:none}}
+body.touring{padding-bottom:260px}
+body.touring aside{opacity:.3;transition:opacity .5s}
+body.touring #out>*{transition:opacity .5s,box-shadow .5s,filter .5s}
+body.touring #out>*:not(.tour-on){opacity:.16;filter:saturate(.4)}
+body.touring #out>.tour-on{outline:3px solid #e2b86a;outline-offset:10px;box-shadow:0 0 44px 10px rgba(226,184,106,.28);border-radius:var(--radius)}
+body.touring #out>.sm-night.tour-on{border-radius:28px}
+body.touring #out>.sm-trio.tour-on{outline:0;box-shadow:none}
+body.touring .sm-trio.tour-on>.sm-panel{transition:opacity .5s}
+body.touring .sm-trio.tour-on>.sm-panel:not(.tour-focus){opacity:.25}
+body.touring .tour-focus{outline:2px solid #e2b86a;outline-offset:11px;box-shadow:0 0 34px 6px rgba(226,184,106,.25)}
+body.touring .sm-themes.tour-focus{border-radius:18px}
+@media (max-width:640px){body.touring #out>.tour-on{outline-offset:6px}body.touring .tour-focus{outline-offset:5px}}
+body.touring .playbtn{display:none}
+body.touring #out>.hdr.tour-on,body.touring #out>.foot.tour-on{border-radius:8px;outline-offset:14px}
+@media (max-width:640px){body.touring #out>.hdr.tour-on,body.touring #out>.foot.tour-on{outline-offset:8px}}
+.tour-bar{position:fixed;z-index:50;left:50%;bottom:max(14px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:min(760px,calc(100vw - 24px));box-sizing:border-box;
+  background:radial-gradient(120% 140% at 20% 0%,#2e3a29 0%,#1f271c 60%,#161c14 100%);color:#efe8d6;border:1px solid rgba(226,184,106,.45);border-radius:22px;padding:14px 18px 14px;box-shadow:0 18px 50px rgba(10,14,8,.45);animation:sm-in .4s ease;display:grid;gap:10px}
+.tb-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.tb-step{font:500 11px/1.2 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:#a9b29a}
+.tb-step b{color:#e2b86a;font-weight:500}
+.tb-prog{height:3px;border-radius:3px;background:rgba(239,232,214,.12);overflow:hidden}
+.tb-prog i{display:block;height:100%;background:#e2b86a;transition:width .4s}
+.tb-cap{margin:0;font-family:var(--display);font-size:clamp(16px,2vw,19px);line-height:1.45;max-height:7.5em;overflow:auto}
+.tb-cap span{opacity:.35;transition:opacity .25s}.tb-cap span.said{opacity:1}
+.tb-row{display:flex;justify-content:flex-end;align-items:center;gap:10px;flex-wrap:wrap}
+.tour-bar button{font:600 14px var(--body);border-radius:999px;cursor:pointer;padding:9px 16px}
+.tb-ghost{background:none;color:#a9b29a;border:1px solid rgba(239,232,214,.2)}
+.tb-ghost:hover{color:#efe8d6;border-color:#a9b29a}
+.tb-exit{background:none;color:#efe8d6;border:1px solid rgba(239,232,214,.35)}
+.tb-dive{background:none;color:#e2b86a;border:1px solid #e2b86a}
+.tb-next{background:#e2b86a;color:#1f271c;border:0;min-width:120px}
+.tb-next:disabled{background:rgba(226,184,106,.25);color:#a9b29a;cursor:default}
+.tb-voice{max-width:190px;font:500 12.5px var(--body);color:#efe8d6;background:rgba(239,232,214,.06);border:1px solid rgba(239,232,214,.2);border-radius:999px;padding:7px 10px}
+.tb-voice option{color:#1f271c}
+.tb-hint{font-size:11.5px;color:#a9b29a;margin:-4px 0 0}
+.tb-skip{background:none;border:0;color:#a9b29a;text-decoration:underline;text-underline-offset:3px;padding:9px 4px!important;margin-right:auto}
+.tour-bar button:focus-visible{outline:2px solid #e2b86a;outline-offset:2px}
+@media (max-width:520px){.tour-bar{padding:12px 14px}.tb-cap{font-size:16px;max-height:6em}.tour-bar button{padding:8px 12px;font-size:13px}.tb-next{min-width:96px}}
+.fig-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.fig-row button{font:600 12.5px var(--body);color:var(--accent);background:var(--surface);border:1px solid var(--accent);border-radius:999px;padding:4px 11px;cursor:pointer}
+.fig-row button[aria-pressed="true"]{background:var(--accent);color:var(--paper)}
+.banner .who{color:var(--muted)}
+.ptitle{display:none;font-size:1.35rem;margin:0}
+.sm-readings{display:none}
+.rd-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.rd-grid article{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.rd-grid h3{font-size:1.3rem;margin:.2rem 0}
+.rd-grid .rs{margin:0;font:11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.rd-grid .rt{margin:0 0 .3rem;color:var(--clay);font-weight:600}
+.rd-grid p{margin:0;font-size:.92rem}
+.pdfbar{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;padding-top:6px;border-top:1px solid var(--line)}
+.pdfbtn{font:600 15px var(--body);color:var(--paper);background:var(--clay);border:0;border-radius:999px;padding:11px 22px;cursor:pointer}
+.pdfbtn:disabled{opacity:.6;cursor:progress}
+.pdfbar .hint{max-width:40ch}
+.exporting aside,.exporting .banner,.exporting .sm-tablist,.exporting .pdfbar{display:none!important}
+.exporting .wrap{display:block;max-width:880px}
+.exporting main{width:880px}
+.exporting .sm-tabs{border:0;background:none;display:grid;gap:14px;overflow:visible}
+.exporting .sm-tabpanel,.exporting .sm-tabpanel[hidden]{display:grid!important;animation:none;background:var(--surface);border:1px solid var(--line);border-radius:18px}
+.exporting .ptitle{display:block}
+.exporting .sm-readings{display:block}
+.exporting .orb{background:var(--c);opacity:calc(.22 + var(--f) * .78)}
+.exporting .sm-ring{animation:none}
+@media print{
+  @page{margin:12mm}
+  html,body{background:#f5f0e6!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  aside,.banner,.sm-tablist,.pdfbar{display:none!important}
+  .wrap{display:block;max-width:none}
+  .sm-tabs{border:0;background:none;display:grid;gap:14px}
+  .sm-tabpanel,.sm-tabpanel[hidden]{display:grid!important;break-inside:avoid;background:var(--surface);border:1px solid var(--line);border-radius:18px}
+  .ptitle,.sm-readings{display:block}
+  .pblock,.rd-grid article{break-inside:avoid}
+  .sm-ring,.node,.orbit.on .arc,.orbit.on .spoke{animation:none!important}
+}
+@media (prefers-reduced-motion:reduce){.sp-word,.beacon::before,.beacon::after,.sm-ring,.node,.node.on .halo,.orbit.on .arc,.orbit.on .spoke,.sm-card.swap,.sm-tabpanel{animation:none!important}}
+</style>
+
+<div class="wrap">
+<aside>
+  <div>
+    <div class="eyebrow">Birth coordinates</div>
+    <h1 class="spawn"><span class="beacon" aria-hidden="true"></span><span class="sp-word">Spawnpoint</span></h1>
+    <p class="lede">The exact moment and place you entered the game. Fill in what you know. Sun sign, numerology and Chinese sign are calculated for you. The map updates as you type.</p>
+  </div>
+
+  <fieldset>
+    <legend class="eyebrow">Birth</legend>
+    <div class="field"><label for="f-name">Full birth name</label><input id="f-name" autocomplete="off" placeholder="As on your birth certificate"></div>
+    <div class="row2">
+      <div class="field"><label for="f-date">Birth date</label><input id="f-date" type="date"></div>
+      <div class="field"><label for="f-time">Birth time</label><input id="f-time" type="time"></div>
+    </div>
+    <label class="check"><input id="f-unk" type="checkbox"> I don't know my birth time</label>
+    <div class="field combo"><label for="f-city">Birth place</label>
+      <div class="combo-box"><input id="f-city" role="combobox" aria-expanded="false" aria-controls="city-list" aria-autocomplete="list" autocomplete="off" placeholder="Search or pick a city">
+      <ul id="city-list" role="listbox" hidden></ul></div>
+      <div class="cityok" id="cityok"></div></div>
+    <details id="coords"><summary>Coordinates and time zone</summary>
+      <div class="row2">
+        <div class="field"><label for="f-lat">Latitude</label><input id="f-lat" inputmode="decimal" placeholder="22.57"></div>
+        <div class="field"><label for="f-lon">Longitude</label><input id="f-lon" inputmode="decimal" placeholder="88.36"></div>
+      </div>
+      <div class="field"><label for="f-tz">Time zone at birth</label><select id="f-tz"></select></div>
+      <p class="hint">City not listed? Enter its coordinates (east and north are positive) and pick its time zone. Daylight saving is handled for you.</p>
+    </details>
+    <div class="auto" id="auto"></div>
+  </fieldset>
+
+  <p class="calcnote" id="calcnote">Everything below is calculated from your birth date, time and place. Change a value only if a chart reading you trust says otherwise.</p>
+
+  <fieldset>
+    <legend class="eyebrow">Astrology</legend>
+    <div class="row2">
+      <div class="field"><label for="f-moon">Moon sign</label><select id="f-moon"></select></div>
+      <div class="field"><label for="f-rising">Rising sign</label><select id="f-rising"></select></div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend class="eyebrow">Human Design</legend>
+    <div class="field"><label for="f-type">Type</label><select id="f-type"></select></div>
+    <div class="row2">
+      <div class="field"><label for="f-auth">Authority</label><select id="f-auth"></select></div>
+      <div class="field"><label for="f-profile">Profile</label><select id="f-profile"></select></div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend class="eyebrow">Optional</legend>
+    <div class="field"><label for="f-enn">Enneagram type</label><select id="f-enn"></select></div>
+  </fieldset>
+
+  <button class="reset" id="clear" type="button">Clear and start fresh</button>
+</aside>
+
+<main id="out"></main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
+<script>
+// Chart engine: tropical Sun/Moon/Ascendant + Human Design bodygraph. Needs global Astronomy (astronomy-engine).
+const HD=(()=>{
+const A=globalThis.Astronomy;
+const SEQ=[41,19,13,49,30,55,37,63,22,36,25,17,21,51,42,3,27,24,2,23,8,20,16,35,45,12,15,52,39,53,62,56,31,33,7,4,29,59,40,64,47,6,46,18,48,57,32,50,28,44,1,43,14,34,9,5,26,11,10,58,38,54,61,60];
+const CENTERS={Head:[64,61,63],Ajna:[47,24,4,17,43,11],Throat:[62,23,56,35,12,45,33,8,31,20,16],G:[7,1,13,10,25,15,46,2],Heart:[21,40,26,51],Spleen:[48,57,44,50,32,28,18],'Solar Plexus':[36,22,37,6,49,55,30],Sacral:[34,5,14,29,59,9,3,42,27],Root:[53,60,52,19,39,41,58,38,54]};
+const CH=[[64,47],[61,24],[63,4],[17,62],[43,23],[11,56],[16,48],[20,57],[20,34],[20,10],[31,7],[8,1],[33,13],[45,21],[35,36],[12,22],[25,51],[10,34],[10,57],[15,5],[2,14],[46,29],[26,44],[40,37],[57,34],[50,27],[32,54],[28,38],[18,58],[59,6],[42,53],[3,60],[9,52],[19,49],[39,55],[41,30]];
+const G2C={};for(const c in CENTERS)CENTERS[c].forEach(g=>G2C[g]=c);
+const norm=x=>((x%360)+360)%360,rad=Math.PI/180;
+function gateLine(lon){const o=norm(lon-302),i=Math.floor(o/5.625);return {gate:SEQ[i],line:Math.floor((o%5.625)/0.9375)+1}}
+function sunLon(d){return A.SunPosition(d).elon}
+function trueNode(d){// Meeus ch.47 mean node + main periodic terms
+  const T=(A.MakeTime(d).tt)/36525;
+  const D=(297.8501921+445267.1114034*T)*rad,M=(357.5291092+35999.0502909*T)*rad,Mp=(134.9633964+477198.8675055*T)*rad,F=(93.2720950+483202.0175233*T)*rad;
+  const om=125.0445479-1934.1362891*T;
+  return norm(om-1.4979*Math.sin(2*(D-F))-0.15*Math.sin(M)-0.1226*Math.sin(2*D)+0.1176*Math.sin(2*F)-0.0801*Math.sin(2*(Mp-F)));}
+function lonOf(body,d){
+  if(body==='Sun')return sunLon(d);
+  if(body==='Moon')return A.EclipticGeoMoon(d).lon;
+  return A.Ecliptic(A.GeoVector(body,d,true)).elon;}
+const BODIES=['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto'];
+function activations(d){
+  const out={};BODIES.forEach(b=>out[b]=lonOf(b,d));
+  out.Earth=norm(out.Sun+180);const n=trueNode(d);out['North Node']=n;out['South Node']=norm(n+180);
+  const r={};for(const k in out)r[k]={lon:out[k],...gateLine(out[k])};return r;}
+function designDate(d){// moment the Sun was 88° behind its birth position
+  const target=norm(sunLon(d)-88);let t=new Date(d.getTime()-88.5*864e5);
+  for(let i=0;i<30;i++){let diff=norm(target-sunLon(t));if(diff>180)diff-=360;if(Math.abs(diff)<1e-6)break;t=new Date(t.getTime()+diff/0.9856*864e5)}
+  return t;}
+function bodygraph(birth){
+  const P=activations(birth),dd=designDate(birth),D=activations(dd);
+  const gates=new Set([...Object.values(P),...Object.values(D)].map(a=>a.gate));
+  const channels=CH.filter(([a,b])=>gates.has(a)&&gates.has(b));
+  const defined=new Set();channels.forEach(([a,b])=>{defined.add(G2C[a]);defined.add(G2C[b])});
+  const adj={};channels.forEach(([a,b])=>{const x=G2C[a],y=G2C[b];(adj[x]=adj[x]||new Set()).add(y);(adj[y]=adj[y]||new Set()).add(x)});
+  const reach=s=>{const seen=new Set([s]),q=[s];while(q.length){const c=q.pop();(adj[c]||[]).forEach(n=>{if(!seen.has(n)){seen.add(n);q.push(n)}})}return seen};
+  const fromThroat=defined.has('Throat')?reach('Throat'):new Set();
+  const motorToThroat=['Sacral','Heart','Solar Plexus','Root'].some(m=>fromThroat.has(m));
+  let type;
+  if(!defined.size)type='Reflector';
+  else if(defined.has('Sacral'))type=motorToThroat?'Manifesting Generator':'Generator';
+  else type=motorToThroat?'Manifestor':'Projector';
+  let auth;
+  if(defined.has('Solar Plexus'))auth='Emotional';
+  else if(defined.has('Sacral'))auth='Sacral';
+  else if(defined.has('Spleen'))auth='Splenic';
+  else if(defined.has('Heart'))auth='Ego';
+  else if(defined.has('G'))auth='Self-Projected';
+  else auth=type==='Reflector'?'Lunar':'Mental (Outer)';
+  // definition: number of connected groups of defined centers
+  const groups=[];const left=new Set(defined);while(left.size){const s=[...left][0],g=reach(s);g.forEach(c=>left.delete(c));groups.push(g)}
+  const defn=['No Definition','Single Definition','Split Definition','Triple Split','Quadruple Split'][groups.length];
+  return {type,auth,profile:P.Sun.line+'/'+D.Sun.line,defined:[...defined],channels,defn,P,D,designDate:dd,
+    cross:[P.Sun.gate,P.Earth.gate,D.Sun.gate,D.Earth.gate]};
+}
+function ascendant(d,lat,lonE){
+  const gast=A.SiderealTime(d)*15,th=norm(gast+lonE)*rad;
+  const T=(A.MakeTime(d).tt)/36525,eps=(23.4392911-0.0130042*T)*rad,phi=lat*rad;
+  return norm(Math.atan2(Math.cos(th),-(Math.sin(th)*Math.cos(eps)+Math.tan(phi)*Math.sin(eps)))/rad);}
+// local wall-clock time in an IANA zone -> UTC Date (handles historical DST via Intl)
+function zonedToUtc(y,mo,d,h,mi,tz){
+  const fmt=new Intl.DateTimeFormat('en-US',{timeZone:tz,hourCycle:'h23',year:'numeric',month:'numeric',day:'numeric',hour:'numeric',minute:'numeric',second:'numeric'});
+  const want=Date.UTC(y,mo-1,d,h,mi);let t=want;
+  for(let i=0;i<3;i++){const p=Object.fromEntries(fmt.formatToParts(new Date(t)).map(x=>[x.type,x.value]));
+    const shown=Date.UTC(+p.year,+p.month-1,+p.day,+p.hour%24,+p.minute,+p.second);t+=want-shown}
+  return new Date(t);}
+const signOf=lon=>Math.floor(norm(lon)/30);
+return {bodygraph,ascendant,zonedToUtc,signOf,lonOf,gateLine,CH,G2C};
+})();
+</script>
+<script>
+const CITIES=`Kolkata, India|22.5726|88.3639|Asia/Kolkata
+Mumbai, India|19.076|72.8777|Asia/Kolkata
+Delhi, India|28.6139|77.209|Asia/Kolkata
+Bengaluru, India|12.9716|77.5946|Asia/Kolkata
+Chennai, India|13.0827|80.2707|Asia/Kolkata
+Hyderabad, India|17.385|78.4867|Asia/Kolkata
+Pune, India|18.5204|73.8567|Asia/Kolkata
+Ahmedabad, India|23.0225|72.5714|Asia/Kolkata
+Jaipur, India|26.9124|75.7873|Asia/Kolkata
+Lucknow, India|26.8467|80.9462|Asia/Kolkata
+Patna, India|25.5941|85.1376|Asia/Kolkata
+Bhubaneswar, India|20.2961|85.8245|Asia/Kolkata
+Guwahati, India|26.1445|91.7362|Asia/Kolkata
+Kochi, India|9.9312|76.2673|Asia/Kolkata
+Chandigarh, India|30.7333|76.7794|Asia/Kolkata
+Siliguri, India|26.7271|88.3953|Asia/Kolkata
+Durgapur, India|23.5204|87.3119|Asia/Kolkata
+Asansol, India|23.6739|86.9524|Asia/Kolkata
+Kharagpur, India|22.346|87.232|Asia/Kolkata
+Ranchi, India|23.3441|85.3096|Asia/Kolkata
+Varanasi, India|25.3176|82.9739|Asia/Kolkata
+Nagpur, India|21.1458|79.0882|Asia/Kolkata
+Indore, India|22.7196|75.8577|Asia/Kolkata
+Bhopal, India|23.2599|77.4126|Asia/Kolkata
+Goa, India|15.4909|73.8278|Asia/Kolkata
+Thiruvananthapuram, India|8.5241|76.9366|Asia/Kolkata
+Dhaka, Bangladesh|23.8103|90.4125|Asia/Dhaka
+Chittagong, Bangladesh|22.3569|91.7832|Asia/Dhaka
+Kathmandu, Nepal|27.7172|85.324|Asia/Kathmandu
+Karachi, Pakistan|24.8607|67.0011|Asia/Karachi
+Lahore, Pakistan|31.5204|74.3587|Asia/Karachi
+Colombo, Sri Lanka|6.9271|79.8612|Asia/Colombo
+Dubai, UAE|25.2048|55.2708|Asia/Dubai
+Singapore|1.3521|103.8198|Asia/Singapore
+Kuala Lumpur, Malaysia|3.139|101.6869|Asia/Kuala_Lumpur
+Bangkok, Thailand|13.7563|100.5018|Asia/Bangkok
+Jakarta, Indonesia|-6.2088|106.8456|Asia/Jakarta
+Manila, Philippines|14.5995|120.9842|Asia/Manila
+Hong Kong|22.3193|114.1694|Asia/Hong_Kong
+Shanghai, China|31.2304|121.4737|Asia/Shanghai
+Beijing, China|39.9042|116.4074|Asia/Shanghai
+Taipei, Taiwan|25.033|121.5654|Asia/Taipei
+Seoul, South Korea|37.5665|126.978|Asia/Seoul
+Tokyo, Japan|35.6762|139.6503|Asia/Tokyo
+Sydney, Australia|-33.8688|151.2093|Australia/Sydney
+Melbourne, Australia|-37.8136|144.9631|Australia/Melbourne
+Auckland, New Zealand|-36.8485|174.7633|Pacific/Auckland
+Tehran, Iran|35.6892|51.389|Asia/Tehran
+Istanbul, Turkey|41.0082|28.9784|Europe/Istanbul
+Tel Aviv, Israel|32.0853|34.7818|Asia/Jerusalem
+Cairo, Egypt|30.0444|31.2357|Africa/Cairo
+Lagos, Nigeria|6.5244|3.3792|Africa/Lagos
+Nairobi, Kenya|-1.2921|36.8219|Africa/Nairobi
+Johannesburg, South Africa|-26.2041|28.0473|Africa/Johannesburg
+Cape Town, South Africa|-33.9249|18.4241|Africa/Johannesburg
+London, UK|51.5074|-0.1278|Europe/London
+Manchester, UK|53.4808|-2.2426|Europe/London
+Edinburgh, UK|55.9533|-3.1883|Europe/London
+Dublin, Ireland|53.3498|-6.2603|Europe/Dublin
+Paris, France|48.8566|2.3522|Europe/Paris
+Berlin, Germany|52.52|13.405|Europe/Berlin
+Munich, Germany|48.1351|11.582|Europe/Berlin
+Amsterdam, Netherlands|52.3676|4.9041|Europe/Amsterdam
+Brussels, Belgium|50.8503|4.3517|Europe/Brussels
+Madrid, Spain|40.4168|-3.7038|Europe/Madrid
+Barcelona, Spain|41.3874|2.1686|Europe/Madrid
+Lisbon, Portugal|38.7223|-9.1393|Europe/Lisbon
+Rome, Italy|41.9028|12.4964|Europe/Rome
+Milan, Italy|45.4642|9.19|Europe/Rome
+Zurich, Switzerland|47.3769|8.5417|Europe/Zurich
+Vienna, Austria|48.2082|16.3738|Europe/Vienna
+Stockholm, Sweden|59.3293|18.0686|Europe/Stockholm
+Oslo, Norway|59.9139|10.7522|Europe/Oslo
+Copenhagen, Denmark|55.6761|12.5683|Europe/Copenhagen
+Warsaw, Poland|52.2297|21.0122|Europe/Warsaw
+Prague, Czechia|50.0755|14.4378|Europe/Prague
+Athens, Greece|37.9838|23.7275|Europe/Athens
+Moscow, Russia|55.7558|37.6173|Europe/Moscow
+New York, USA|40.7128|-74.006|America/New_York
+Boston, USA|42.3601|-71.0589|America/New_York
+Philadelphia, USA|39.9526|-75.1652|America/New_York
+Washington DC, USA|38.9072|-77.0369|America/New_York
+Atlanta, USA|33.749|-84.388|America/New_York
+Miami, USA|25.7617|-80.1918|America/New_York
+Detroit, USA|42.3314|-83.0458|America/Detroit
+Pittsburgh, USA|40.4406|-79.9959|America/New_York
+Charlotte, USA|35.2271|-80.8431|America/New_York
+Raleigh, USA|35.7796|-78.6382|America/New_York
+Chicago, USA|41.8781|-87.6298|America/Chicago
+Houston, USA|29.7604|-95.3698|America/Chicago
+Dallas, USA|32.7767|-96.797|America/Chicago
+Austin, USA|30.2672|-97.7431|America/Chicago
+Minneapolis, USA|44.9778|-93.265|America/Chicago
+New Orleans, USA|29.9511|-90.0715|America/Chicago
+Nashville, USA|36.1627|-86.7816|America/Chicago
+Denver, USA|39.7392|-104.9903|America/Denver
+Phoenix, USA|33.4484|-112.074|America/Phoenix
+Salt Lake City, USA|40.7608|-111.891|America/Denver
+Los Angeles, USA|34.0522|-118.2437|America/Los_Angeles
+San Francisco, USA|37.7749|-122.4194|America/Los_Angeles
+San Jose, USA|37.3382|-121.8863|America/Los_Angeles
+San Diego, USA|32.7157|-117.1611|America/Los_Angeles
+Seattle, USA|47.6062|-122.3321|America/Los_Angeles
+Portland, USA|45.5152|-122.6784|America/Los_Angeles
+Las Vegas, USA|36.1699|-115.1398|America/Los_Angeles
+Honolulu, USA|21.3069|-157.8583|Pacific/Honolulu
+Anchorage, USA|61.2181|-149.9003|America/Anchorage
+Toronto, Canada|43.6532|-79.3832|America/Toronto
+Montreal, Canada|45.5017|-73.5673|America/Toronto
+Vancouver, Canada|49.2827|-123.1207|America/Vancouver
+Calgary, Canada|51.0447|-114.0719|America/Edmonton
+Mexico City, Mexico|19.4326|-99.1332|America/Mexico_City
+Bogota, Colombia|4.711|-74.0721|America/Bogota
+Lima, Peru|-12.0464|-77.0428|America/Lima
+Santiago, Chile|-33.4489|-70.6693|America/Santiago
+Buenos Aires, Argentina|-34.6037|-58.3816|America/Argentina/Buenos_Aires
+Sao Paulo, Brazil|-23.5505|-46.6333|America/Sao_Paulo
+Rio de Janeiro, Brazil|-22.9068|-43.1729|America/Sao_Paulo
+Howrah, India|22.5958|88.2636|Asia/Kolkata
+Surat, India|21.1702|72.8311|Asia/Kolkata
+Vadodara, India|22.3072|73.1812|Asia/Kolkata
+Kanpur, India|26.4499|80.3319|Asia/Kolkata
+Agra, India|27.1767|78.0081|Asia/Kolkata
+Prayagraj, India|25.4358|81.8463|Asia/Kolkata
+Noida, India|28.5355|77.391|Asia/Kolkata
+Gurugram, India|28.4595|77.0266|Asia/Kolkata
+Dehradun, India|30.3165|78.0322|Asia/Kolkata
+Shimla, India|31.1048|77.1734|Asia/Kolkata
+Amritsar, India|31.634|74.8723|Asia/Kolkata
+Jammu, India|32.7266|74.857|Asia/Kolkata
+Srinagar, India|34.0837|74.7973|Asia/Kolkata
+Raipur, India|21.2514|81.6296|Asia/Kolkata
+Cuttack, India|20.4625|85.8828|Asia/Kolkata
+Jamshedpur, India|22.8046|86.2029|Asia/Kolkata
+Dhanbad, India|23.7957|86.4304|Asia/Kolkata
+Gangtok, India|27.3389|88.6065|Asia/Kolkata
+Darjeeling, India|27.041|88.2663|Asia/Kolkata
+Shillong, India|25.5788|91.8933|Asia/Kolkata
+Agartala, India|23.8315|91.2868|Asia/Kolkata
+Imphal, India|24.817|93.9368|Asia/Kolkata
+Visakhapatnam, India|17.6868|83.2185|Asia/Kolkata
+Vijayawada, India|16.5062|80.648|Asia/Kolkata
+Coimbatore, India|11.0168|76.9558|Asia/Kolkata
+Madurai, India|9.9252|78.1198|Asia/Kolkata
+Mysuru, India|12.2958|76.6394|Asia/Kolkata
+Mangaluru, India|12.9141|74.856|Asia/Kolkata
+Kozhikode, India|11.2588|75.7804|Asia/Kolkata
+Baltimore, USA|39.2904|-76.6122|America/New_York
+Newark, USA|40.7357|-74.1724|America/New_York
+Jersey City, USA|40.7178|-74.0431|America/New_York
+Providence, USA|41.824|-71.4128|America/New_York
+Hartford, USA|41.7658|-72.6734|America/New_York
+Columbus, USA|39.9612|-82.9988|America/New_York
+Cleveland, USA|41.4993|-81.6944|America/New_York
+Cincinnati, USA|39.1031|-84.512|America/New_York
+Ann Arbor, USA|42.2808|-83.743|America/Detroit
+Indianapolis, USA|39.7684|-86.1581|America/Indiana/Indianapolis
+Tampa, USA|27.9506|-82.4572|America/New_York
+Orlando, USA|28.5383|-81.3792|America/New_York
+Jacksonville, USA|30.3322|-81.6557|America/New_York
+St. Louis, USA|38.627|-90.1994|America/Chicago
+Kansas City, USA|39.0997|-94.5786|America/Chicago
+Milwaukee, USA|43.0389|-87.9065|America/Chicago
+Madison, USA|43.0731|-89.4012|America/Chicago
+San Antonio, USA|29.4241|-98.4936|America/Chicago
+Albuquerque, USA|35.0844|-106.6504|America/Denver
+Sacramento, USA|38.5816|-121.4944|America/Los_Angeles
+Oakland, USA|37.8044|-122.2712|America/Los_Angeles
+Ottawa, Canada|45.4215|-75.6972|America/Toronto
+Winnipeg, Canada|49.8951|-97.1384|America/Winnipeg
+Edmonton, Canada|53.5461|-113.4938|America/Edmonton
+Brisbane, Australia|-27.4698|153.0251|Australia/Brisbane
+Perth, Australia|-31.9505|115.8605|Australia/Perth
+Adelaide, Australia|-34.9285|138.6007|Australia/Adelaide
+Wellington, New Zealand|-41.2866|174.7756|Pacific/Auckland
+Osaka, Japan|34.6937|135.5023|Asia/Tokyo
+Kyoto, Japan|35.0116|135.7681|Asia/Tokyo
+Shenzhen, China|22.5431|114.0579|Asia/Shanghai
+Guangzhou, China|23.1291|113.2644|Asia/Shanghai
+Chengdu, China|30.5728|104.0668|Asia/Shanghai
+Hanoi, Vietnam|21.0278|105.8342|Asia/Ho_Chi_Minh
+Ho Chi Minh City, Vietnam|10.8231|106.6297|Asia/Ho_Chi_Minh
+Yangon, Myanmar|16.8409|96.1735|Asia/Yangon
+Thimphu, Bhutan|27.4728|89.639|Asia/Thimphu
+Islamabad, Pakistan|33.6844|73.0479|Asia/Karachi
+Kabul, Afghanistan|34.5553|69.2075|Asia/Kabul
+Tashkent, Uzbekistan|41.2995|69.2401|Asia/Tashkent
+Almaty, Kazakhstan|43.222|76.8512|Asia/Almaty
+Riyadh, Saudi Arabia|24.7136|46.6753|Asia/Riyadh
+Jeddah, Saudi Arabia|21.4858|39.1925|Asia/Riyadh
+Doha, Qatar|25.2854|51.531|Asia/Qatar
+Abu Dhabi, UAE|24.4539|54.3773|Asia/Dubai
+Kuwait City, Kuwait|29.3759|47.9774|Asia/Kuwait
+Muscat, Oman|23.588|58.3829|Asia/Muscat
+Amman, Jordan|31.9454|35.9284|Asia/Amman
+Beirut, Lebanon|33.8938|35.5018|Asia/Beirut
+Baghdad, Iraq|33.3152|44.3661|Asia/Baghdad
+Addis Ababa, Ethiopia|8.9806|38.7578|Africa/Addis_Ababa
+Accra, Ghana|5.6037|-0.187|Africa/Accra
+Casablanca, Morocco|33.5731|-7.5898|Africa/Casablanca
+Dakar, Senegal|14.7167|-17.4677|Africa/Dakar
+Kampala, Uganda|0.3476|32.5825|Africa/Kampala
+Dar es Salaam, Tanzania|-6.7924|39.2083|Africa/Dar_es_Salaam
+Frankfurt, Germany|50.1109|8.6821|Europe/Berlin
+Hamburg, Germany|53.5511|9.9937|Europe/Berlin
+Lyon, France|45.764|4.8357|Europe/Paris
+Marseille, France|43.2965|5.3698|Europe/Paris
+Naples, Italy|40.8518|14.2681|Europe/Rome
+Glasgow, UK|55.8642|-4.2518|Europe/London
+Birmingham, UK|52.4862|-1.8904|Europe/London
+Helsinki, Finland|60.1699|24.9384|Europe/Helsinki
+Reykjavik, Iceland|64.1466|-21.9426|Atlantic/Reykjavik
+Budapest, Hungary|47.4979|19.0402|Europe/Budapest
+Bucharest, Romania|44.4268|26.1025|Europe/Bucharest
+Belgrade, Serbia|44.7866|20.4489|Europe/Belgrade
+Kyiv, Ukraine|50.4501|30.5234|Europe/Kiev
+Guadalajara, Mexico|20.6597|-103.3496|America/Mexico_City
+Monterrey, Mexico|25.6866|-100.3161|America/Monterrey
+Havana, Cuba|23.1136|-82.3666|America/Havana
+San Juan, Puerto Rico|18.4655|-66.1057|America/Puerto_Rico
+Kingston, Jamaica|17.9712|-76.7936|America/Jamaica
+Port of Spain, Trinidad|10.6549|-61.5019|America/Port_of_Spain
+Caracas, Venezuela|10.4806|-66.9036|America/Caracas
+Quito, Ecuador|-0.1807|-78.4678|America/Guayaquil
+La Paz, Bolivia|-16.4897|-68.1193|America/La_Paz
+Montevideo, Uruguay|-34.9011|-56.1645|America/Montevideo`.split('\n').map(l=>{const [n,la,lo,tz]=l.split('|');return {n,lat:+la,lon:+lo,tz}});
+const SIGNS=[
+ {n:'Aries',g:'♈',el:'Fire',core:'a starter who comes alive by acting first',need:'freedom to move on instinct',mask:'direct, quick and ready to go',shadow:'impatience, and burning out on fights you didn\'t need',tags:['lead','freedom']},
+ {n:'Taurus',g:'♉',el:'Earth',core:'a builder who makes things real and lasting',need:'steadiness, comfort and time',mask:'calm, grounded and unhurried',shadow:'stubbornness, and holding on to what is already finished',tags:['build']},
+ {n:'Gemini',g:'♊',el:'Air',core:'a connector who learns by talking, reading and trying',need:'variety, and someone to think out loud with',mask:'curious, quick and easy to talk to',shadow:'scattering your attention until nothing lands',tags:['express','connect']},
+ {n:'Cancer',g:'♋',el:'Water',core:'a protector who creates belonging',need:'emotional safety and a home base',mask:'warm, perceptive and a little guarded',shadow:'retreating into your shell and keeping score',tags:['feel','serve']},
+ {n:'Leo',g:'♌',el:'Fire',core:'a creator who is meant to be seen',need:'warmth, appreciation and room to play',mask:'bright, generous and confident',shadow:'needing applause to feel worthy',tags:['express','lead']},
+ {n:'Virgo',g:'♍',el:'Earth',core:'a refiner who improves whatever you touch',need:'order, usefulness and a clear task',mask:'thoughtful, precise and helpful',shadow:'self-criticism, and never calling it good enough',tags:['serve','build']},
+ {n:'Libra',g:'♎',el:'Air',core:'a harmonizer who sees every side',need:'beauty, fairness and partnership',mask:'graceful, diplomatic and easy to like',shadow:'dropping your own view to keep the peace',tags:['connect']},
+ {n:'Scorpio',g:'♏',el:'Water',core:'a transformer who goes to the bottom of things',need:'depth, trust and total honesty',mask:'intense, private and magnetic',shadow:'control, and testing people instead of trusting them',tags:['transform','feel']},
+ {n:'Sagittarius',g:'♐',el:'Fire',core:'a seeker who finds meaning by going further',need:'freedom, adventure and a big why',mask:'open, funny and restless',shadow:'leaving right before the hard part',tags:['seek','freedom']},
+ {n:'Capricorn',g:'♑',el:'Earth',core:'a builder of long-term structures',need:'respect, progress and a summit to climb',mask:'composed, capable and serious',shadow:'making your worth conditional on achievement',tags:['build','lead']},
+ {n:'Aquarius',g:'♒',el:'Air',core:'an innovator who thinks on behalf of the group',need:'independence and ideas that matter',mask:'original, friendly and a bit detached',shadow:'intellectualizing feelings to avoid them',tags:['freedom','insight']},
+ {n:'Pisces',g:'♓',el:'Water',core:'a dreamer who feels what others can\'t name',need:'quiet, creativity and spiritual space',mask:'gentle, dreamy and empathic',shadow:'dissolving into other people\'s needs',tags:['feel','insight']}
+];
+const TAGS={
+ lead:['Initiating','You\'re built to start things and set direction. Waiting for someone else to go first costs you.'],
+ build:['Building','You make ideas real. Steady, compounding effort is where your confidence comes from.'],
+ express:['Expressing','Your voice and creativity are central, not a side hobby. Being unseen drains you.'],
+ feel:['Feeling deeply','Your emotions carry real information. Treat them as data, not as a problem to manage.'],
+ seek:['Seeking meaning','You need a reason bigger than the task. Without a why, motivation collapses.'],
+ serve:['Being useful','You come alive improving things for others. Watch that it stays a choice, not an obligation.'],
+ connect:['Connecting','Relationships are your medium. You think and grow best with the right people around.'],
+ transform:['Transforming','You\'re drawn to endings, depth and rebirth. Crises tend to become turning points for you.'],
+ freedom:['Independence','You need room to move. Structures that box you in will make you restless or rebellious.'],
+ insight:['Seeing patterns','You notice what others miss. Your perspective is a contribution in itself.']
+};
+const NUMS={
+ 1:{t:'independence and self-leadership',gift:'starting from zero',sh:'isolation, and proving yourself alone',d:'to stand on your own and be original',p:'Start one thing this week without asking anyone\'s permission.',tags:['lead','freedom']},
+ 2:{t:'partnership and sensitivity',gift:'reading the room and bringing people together',sh:'people-pleasing and erasing yourself',d:'deep, peaceful connection',p:'Say one honest no this week.',tags:['connect','feel']},
+ 3:{t:'creative self-expression',gift:'words, humor and making heavy things lighter',sh:'scattered energy and hiding behind charm',d:'to express yourself and be heard',p:'Make something small and share it before it feels finished.',tags:['express']},
+ 4:{t:'structure and mastery through effort',gift:'discipline and reliable systems',sh:'rigidity and overwork',d:'security and a solid foundation',p:'Pick one routine and protect it for 30 days.',tags:['build']},
+ 5:{t:'freedom and change',gift:'adaptability and learning by experience',sh:'restlessness and excess',d:'adventure and variety',p:'Choose commitments that give you more freedom, not less.',tags:['freedom','seek']},
+ 6:{t:'responsibility, care and home',gift:'nurturing, and making things beautiful',sh:'martyrdom, and control through helping',d:'to love and be needed',p:'Give yourself the care you give others, first.',tags:['serve','feel']},
+ 7:{t:'inner wisdom and research',gift:'analysis and intuition working together',sh:'withdrawal and distrust',d:'truth, understanding and solitude',p:'Block regular time alone to think, and keep it.',tags:['insight','seek']},
+ 8:{t:'power, money and impact',gift:'running things and making them scale',sh:'workaholism and power struggles',d:'achievement and real authority',p:'Decide what "enough" means before you chase more.',tags:['lead','build']},
+ 9:{t:'compassion and completion',gift:'seeing the big picture and giving back',sh:'clinging to the past and over-giving',d:'to make the world kinder',p:'Finish or release one thing you\'ve been carrying.',tags:['serve','transform']},
+ 11:{t:'intuition and inspiration (a master number)',gift:'sensing what others miss and lighting people up',sh:'nervous tension and self-doubt',d:'to inspire and live in alignment',p:'Ground your nervous system every day: walk, breathe, sleep.',tags:['insight','express']},
+ 22:{t:'master building (a master number)',gift:'turning big visions into real structures',sh:'pressure, and fear of wasted potential',d:'to build something that outlasts you',p:'Break the vision into one concrete goal for this quarter.',tags:['build','lead']},
+ 33:{t:'master teaching (a master number)',gift:'healing and teaching through love',sh:'carrying everyone\'s burdens',d:'to uplift others',p:'Teach from your own life, and rest before you\'re empty.',tags:['serve','express']}
+};
+const PYEAR={
+ 1:['New beginnings','A fresh nine-year cycle starts. Plant seeds, launch, choose a direction.','Start the thing. Say yes to bold first steps.','Waiting for perfect conditions.'],
+ 2:['Patience and partnership','Growth is slow and underground. Relationships and collaboration matter most.','Cooperate, listen, nurture what you started last year.','Forcing results or going it alone.'],
+ 3:['Expression and expansion','A social, creative, visible year. Your voice opens doors.','Create, share, show up, have fun.','Spreading yourself across too many projects.'],
+ 4:['Foundations','A year of work, routines, health and structure. Effort now pays later.','Build systems, fix the basics, commit to the boring work.','Shortcuts and expecting quick rewards.'],
+ 5:['Change and freedom','Movement, travel and pivots. Life shakes loose what no longer fits.','Say yes to new experiences and adapt fast.','Clinging to old plans or overindulging.'],
+ 6:['Home and responsibility','Family, commitments and care take center stage.','Tend relationships, home and health. Make things beautiful.','Taking on everyone else\'s problems.'],
+ 7:['Reflection','An inward year for study, rest and spiritual work. Answers come from inside.','Learn, journal, spend time alone, go deeper.','Pushing for outer achievement or ignoring your intuition.'],
+ 8:['Harvest and power','Career, money and recognition for past effort.','Ask for more, step into authority, make the big move.','Abusing power or neglecting the people around you.'],
+ 9:['Completion','A cycle closes. Release, finish and clear space for what\'s next.','Finish projects, let go, forgive, give back.','Starting major new things before the slate is clear.']
+};
+const TYPES={
+ 'Generator':{s:'Wait to respond',sig:'Satisfaction',ns:'Frustration',d:'You have sustainable life-force energy. Your power comes from responding to what life brings you, not from forcing things to start.',self:'a powerhouse that works best when it loves the work',tags:['build']},
+ 'Manifesting Generator':{s:'Wait to respond, then inform',sig:'Satisfaction and peace',ns:'Frustration and anger',d:'You\'re multi-passionate and fast. Skipping steps and changing direction is part of how you work, not a flaw.',self:'a fast-moving builder for whom pivots are part of the design',tags:['build','freedom']},
+ 'Manifestor':{s:'Inform before you act',sig:'Peace',ns:'Anger',d:'You\'re here to initiate. You don\'t need permission, but telling people what you\'re doing removes their resistance.',self:'a starter whose job is to begin what others continue',tags:['lead','freedom']},
+ 'Projector':{s:'Wait for the invitation',sig:'Success',ns:'Bitterness',d:'You\'re here to guide. You see people and systems clearly, and you shine when you\'re recognized and invited in.',self:'a guide, not a workhorse, for whom rest is part of the job',tags:['insight','connect']},
+ 'Reflector':{s:'Wait a lunar cycle (about 28 days) before big decisions',sig:'Surprise',ns:'Disappointment',d:'You mirror the health of your environment. Where you live and who you\'re with matters more for you than for anyone.',self:'a barometer for the people and places around you',tags:['insight','feel']}
+};
+const AUTH={
+ 'Emotional':['Ride your emotional wave. Don\'t decide at the high or the low; clarity arrives over time.','Sleep on every important decision at least once.'],
+ 'Sacral':['Trust your gut response in the moment: a gut "uh-huh" for yes or "nuh-uh" for no.','Have someone ask you yes/no questions and listen to the sound you make.'],
+ 'Splenic':['Trust the quiet, instant intuition. It speaks once, in the moment, and doesn\'t repeat.','Act on the first quiet hit instead of arguing it down.'],
+ 'Ego':['Ask what you actually want and are willing to commit your will to.','Only promise what your heart is genuinely behind.'],
+ 'Self-Projected':['Talk it out and listen to what you hear yourself say about your direction.','Talk decisions through with someone who won\'t give you advice.'],
+ 'Mental (Outer)':['Clarity comes from talking with trusted people in the right environments, not from your own head.','Change rooms and sounding boards before deciding.'],
+ 'Lunar':['Take a full moon cycle and notice how the decision feels across the whole month.','Journal the decision daily for 28 days.']
+};
+const LINES={1:['Investigator','you need a solid base of knowledge before you feel secure'],2:['Hermit','your gifts come out when you get time alone and then get called out'],3:['Experimenter','you learn through trial and error, so "mistakes" are your research'],4:['Networker','your opportunities come through relationships and your network'],5:['Heretic','people project expectations on you and call you in to fix things'],6:['Role Model','you learn by experience early, step back, then become an example']};
+const PROFILES=['1/3','1/4','2/4','2/5','3/5','3/6','4/6','4/1','5/1','5/2','6/2','6/3'];
+const ANIMALS=[['Rat','resourceful and quick-witted',['insight']],['Ox','patient and dependable',['build']],['Tiger','brave and driven',['lead']],['Rabbit','gentle and diplomatic',['connect']],['Dragon','ambitious and charismatic',['lead','express']],['Snake','wise and perceptive',['insight','transform']],['Horse','free-spirited and energetic',['freedom']],['Goat','creative and kind',['feel','express']],['Monkey','clever and inventive',['insight']],['Rooster','observant and hardworking',['serve']],['Dog','loyal and honest',['serve']],['Pig','generous and warm',['feel']]];
+const ELEM5=['Metal','Metal','Water','Water','Wood','Wood','Fire','Fire','Earth','Earth'];
+const ENN={1:['Reformer','to be good and right','Let things be good enough. Rest is not a moral failure.',['serve','build'],'rigid perfectionism'],2:['Helper','to be loved','Ask for what you need directly.',['serve','connect'],'giving to get'],3:['Achiever','to be valuable','Value who you are when you\'re not performing.',['lead','express'],'shapeshifting for approval'],4:['Individualist','to be truly yourself','Act on your feelings, don\'t only explore them.',['feel','express'],'longing for what\'s missing'],5:['Investigator','to be capable and understand','Engage before you feel fully ready.',['insight'],'hoarding energy and withdrawing'],6:['Loyalist','to feel secure and supported','Trust your own read before seeking reassurance.',['connect'],'anxious worst-case thinking'],7:['Enthusiast','to be free and satisfied','Stay with one thing past the point it stops being new.',['freedom','seek'],'escaping pain through plans'],8:['Challenger','to protect yourself and stay in control','Let people see your softer side.',['lead','transform'],'steamrolling to avoid vulnerability'],9:['Peacemaker','to have inner peace','Your opinion matters. Say it first.',['connect','feel'],'numbing out to avoid conflict']};
+const ELEMS={Fire:['action and enthusiasm','Move your body and start before you feel ready.'],Earth:['practicality and the body','Ground ideas in a schedule, a budget, a physical habit.'],Air:['ideas and conversation','Talk your thoughts out and write them down.'],Water:['emotion and intuition','Make time to feel things fully before you fix them.']};
+
+const CHOICE={
+ lead:{car:['founder','product or project lead','creative director','independent consultant'],pl:'a fast-moving city where new things get started',w:'owning equity or your own business, not just a salary',x:'starting things and setting direction in public'},
+ build:{car:['engineer or architect','operations lead','craftsperson or maker','finance or real estate'],pl:'somewhere stable where you can put down roots',w:'slow compounding: steady saving, real assets, long-term investing',x:'making tangible things that last'},
+ express:{car:['writer or content creator','performer or designer','teacher or speaker','brand and marketing'],pl:'a culture-rich city with stages, studios and scenes',w:'monetizing your voice: audience, creative work, personal brand',x:'sharing your ideas and art with an audience'},
+ feel:{car:['therapist or counselor','musician or artist','healthcare or healing work','care roles'],pl:'a quiet place near water, with a small close community',w:'work that doesn\'t exhaust your nervous system; protect your energy as an asset',x:'turning emotion into art, music or care'},
+ seek:{car:['researcher or academic','travel or international work','philosophy, coaching or ministry','journalism'],pl:'abroad, or somewhere that makes travel easy',w:'investing in learning and experiences that open bigger doors',x:'exploring, teaching what you find, and asking big questions'},
+ serve:{car:['healthcare or wellness','editor, analyst or QA','nonprofit or social impact','skilled trades or service'],pl:'a walkable neighborhood where you are useful to people you know',w:'skills that are always in demand; charge properly for help you give',x:'improving things for others through craft and care'},
+ connect:{car:['HR, recruiting or community','mediation, law or diplomacy','sales or partnerships','event or hospitality work'],pl:'a social, friendly city with strong community life',w:'your network: referrals, partnerships and shared ventures',x:'bringing people together and making the room work'},
+ transform:{car:['psychology or crisis work','investigation or research','turnaround and change management','healing arts'],pl:'somewhere with depth and history, ideally a place of personal reinvention',w:'strategic, high-conviction bets; shared resources and investing',x:'helping people and things go through change'},
+ freedom:{car:['freelancer or remote work','entrepreneur','tech and innovation','travel, adventure or field work'],pl:'a place with options, or a base you can leave easily',w:'multiple income streams and location-independent work',x:'doing it your own way, on your own schedule'},
+ insight:{car:['data science or research','strategy or advising','psychology or astrology','software or systems design'],pl:'a calm place with space to think, near smart people',w:'expertise, advising fees and patient long-term investing',x:'naming patterns others miss and offering perspective'}
+};
+const ELCH={Fire:{h:'intense movement, sport and sunlight. Watch for burnout and inflammation.',pl:'sunny, warm places with energy and momentum',love:['Aries','Leo','Sagittarius','Gemini','Libra','Aquarius']},
+ Earth:{h:'strength training, long walks, gardening, regular meals and real sleep.',pl:'close to nature: mountains, forests, gardens, a solid home',love:['Taurus','Virgo','Capricorn','Cancer','Scorpio','Pisces']},
+ Air:{h:'breathwork, dance or cycling, and protection from overstimulation and screens.',pl:'open, airy cities with culture, ideas and conversation',love:['Gemini','Libra','Aquarius','Aries','Leo','Sagittarius']},
+ Water:{h:'swimming, yoga, rest and time near water. Boundaries protect your body as much as your mind.',pl:'near the ocean, a lake or a river, in a quiet neighborhood',love:['Cancer','Scorpio','Pisces','Taurus','Virgo','Capricorn']}};
+const WEALTH={1:'self-employment and owning your work',2:'partnerships and shared ventures',3:'creative and communication work',4:'steady saving, property and compound growth',5:'multiple income streams, sales and travel-linked work',6:'service businesses, home and property',7:'specialist expertise and patient long-term investing',8:'business, leadership and scale',9:'mission-driven work, where giving creates return',11:'teaching, coaching and inspiring others',22:'large-scale building and institutions',33:'healing and teaching vocations'};
+const HDLOVE={'Generator':'You need a partner who asks you questions and respects your gut yes or no. Projectors often bring the guidance you enjoy.','Manifesting Generator':'You need a partner who can keep up and doesn\'t take pivots personally. Tell them what you\'re doing before you do it.','Manifestor':'You need a partner who gives you space and doesn\'t need to approve every move. Informing them is what keeps the peace.','Projector':'You need a partner who sees you and invites your input. Generators often bring the steady energy you lack.','Reflector':'You need a partner who gives you time and a healthy shared environment. Who you live with shapes how you feel.'};
+const HDWORK={'Generator':'Choose work you respond to with a full-body yes. You\'re built for mastery through repetition.','Manifesting Generator':'Choose work with variety and speed, or several projects at once. A single slow track will frustrate you.','Manifestor':'Choose work where you can initiate without needing approval: founder, freelancer, first in.','Projector':'Choose guiding roles (advisor, manager, coach, strategist) where you\'re recognized and invited, not grinding hours.','Reflector':'Choose the environment before the job. A healthy workplace and team matter more than the title.'};
+
+// Opening examples: historical figures with birth times from records (Astro-Databank rating AA/A).
+// Pre-standard-time births use local mean time (tz 'LMT'), worked out from the longitude.
+const FIGURES=[
+ {key:'jung',role:'Psychiatrist',label:'Carl Jung',first:'Carl',who:'Swiss psychiatrist who mapped the unconscious (and read charts himself)',v:{name:'Carl Gustav Jung',date:'1875-07-26',time:'19:32',city:'Kesswil, Switzerland',lat:'47.5966',lon:'9.3166',tz:'LMT'}},
+ {key:'kahlo',role:'Painter',label:'Frida Kahlo',first:'Frida',who:'Mexican painter who turned pain into color',v:{name:'Frida Kahlo',date:'1907-07-06',time:'08:30',city:'Coyoacán, Mexico',lat:'19.3500',lon:'-99.1620',tz:'LMT'}},
+ {key:'chopra',role:'Actor & singer',label:'Priyanka Chopra',first:'Priyanka',who:'Indian actor and singer, from Bollywood to Hollywood',v:{name:'Priyanka Chopra',date:'1982-07-18',time:'01:30',city:'Jamshedpur, India',lat:'22.8046',lon:'86.2029',tz:'Asia/Kolkata'}},
+ {key:'lee',role:'Martial artist',label:'Bruce Lee',first:'Bruce',who:'Chinese-American martial artist, actor and philosopher of "be water"',v:{name:'Bruce Jun Fan Lee',date:'1940-11-27',time:'07:12',city:'San Francisco, USA',lat:'37.7749',lon:'-122.4194',tz:'America/Los_Angeles'}},
+ {key:'ono',role:'Artist & musician',label:'Yoko Ono',first:'Yoko',who:'Japanese conceptual artist and musician',v:{name:'Yoko Ono',date:'1933-02-18',time:'20:30',city:'Tokyo, Japan',lat:'35.6762',lon:'139.6503',tz:'Asia/Tokyo'}},
+ {key:'beyonce',role:'Pop star',label:'Beyoncé',first:'Beyoncé',who:'Houston-born pop star (time from her published birth certificate)',v:{name:'Beyonce Giselle Knowles',date:'1981-09-04',time:'21:47',city:'Houston, USA',lat:'29.7604',lon:'-95.3698',tz:'America/Chicago'}},
+ {key:'angelou',role:'Poet',label:'Maya Angelou',first:'Maya',who:'poet and memoirist (born Marguerite Johnson, so numerology uses that name)',v:{name:'Marguerite Annie Johnson',date:'1928-04-04',time:'14:10',city:'St. Louis, USA',lat:'38.627',lon:'-90.1994',tz:'America/Chicago'}},
+ {key:'bowie',role:'Pop star',label:'David Bowie',first:'David',who:'British shapeshifting pop star (born David Jones)',v:{name:'David Robert Jones',date:'1947-01-08',time:'09:00',city:'Brixton, London, UK',lat:'51.4613',lon:'-0.1156',tz:'Europe/London'}},
+ {key:'makeba',role:'Singer',label:'Miriam Makeba',first:'Miriam',who:'South African singer, "Mama Africa" (born Zenzile Makeba; birth time not on record)',v:{name:'Zenzile Miriam Makeba',date:'1932-03-04',time:'',unk:true,city:'Johannesburg, South Africa',lat:'-26.2041',lon:'28.0473',tz:'Africa/Johannesburg'}},
+ {key:'fela',role:'Musician',label:'Fela Kuti',first:'Fela',who:'Nigerian creator of Afrobeat (birth time not on record)',v:{name:'Olufela Olusegun Oludotun Ransome-Kuti',date:'1938-10-15',time:'',unk:true,city:'Abeokuta, Nigeria',lat:'7.1557',lon:'3.3451',tz:'Africa/Lagos'}},
+ {key:'maathai',role:'Activist & ecologist',label:'Wangari Maathai',first:'Wangari',who:'Kenyan founder of the Green Belt Movement, Nobel Peace Prize (born Wangari Muta; birth time not on record)',v:{name:'Wangari Muta',date:'1940-04-01',time:'',unk:true,city:'Ihithe, Nyeri, Kenya',lat:'-0.4167',lon:'36.9500',tz:'Africa/Nairobi'}},
+ {key:'mandela',role:'Statesman',label:'Nelson Mandela',first:'Nelson',who:'South African liberation leader (born Rolihlahla Mandela; birth time disputed, so left out)',v:{name:'Rolihlahla Mandela',date:'1918-07-18',time:'',unk:true,city:'Mvezo, South Africa',lat:'-31.9500',lon:'28.5000',tz:'Africa/Johannesburg'}},
+ {key:'miyazaki',role:'Animator',label:'Hayao Miyazaki',first:'Hayao',who:'Japanese animator behind Studio Ghibli (birth time not on record)',v:{name:'Hayao Miyazaki',date:'1941-01-05',time:'',unk:true,city:'Tokyo, Japan',lat:'35.6762',lon:'139.6503',tz:'Asia/Tokyo'}},
+ {key:'yeoh',role:'Actor',label:'Michelle Yeoh',first:'Michelle',who:'Malaysian actor, from Hong Kong action to an Oscar (birth time not on record)',v:{name:'Michelle Yeoh',date:'1962-08-06',time:'',unk:true,city:'Ipoh, Malaysia',lat:'4.5975',lon:'101.0901',tz:'Asia/Kuala_Lumpur'}},
+ {key:'tagore',role:'Poet & composer',label:'Rabindranath Tagore',first:'Rabindranath',who:'Bengali poet, songwriter and painter, first Asian Nobel laureate (recorded times conflict, so left out)',v:{name:'Rabindranath Tagore',date:'1861-05-07',time:'',unk:true,city:'Kolkata, India',lat:'22.5726',lon:'88.3639',tz:'LMT'}},
+ {key:'lata',role:'Singer',label:'Lata Mangeshkar',first:'Lata',who:'Indian playback singer, "Nightingale of India" (born Hema Mangeshkar; recorded times conflict)',v:{name:'Hema Mangeshkar',date:'1929-09-28',time:'',unk:true,city:'Indore, India',lat:'22.7196',lon:'75.8577',tz:'Asia/Kolkata'}},
+ {key:'rahman',role:'Composer',label:'A. R. Rahman',first:'Rahman',who:'Indian film composer (born A. S. Dileep Kumar; birth time not on record)',v:{name:'Dileep Kumar',date:'1967-01-06',time:'',unk:true,city:'Chennai, India',lat:'13.0827',lon:'80.2707',tz:'Asia/Kolkata'}},
+ {key:'einstein',role:'Physicist',label:'Albert Einstein',first:'Albert',who:'physicist, violinist, patient daydreamer',v:{name:'Albert Einstein',date:'1879-03-14',time:'11:30',city:'Ulm, Germany',lat:'48.4011',lon:'9.9876',tz:'LMT'}},
+ {key:'king',role:'Preacher & organizer',label:'Martin Luther King Jr.',first:'Martin',who:'preacher and organizer (born Michael King, so numerology uses that name)',v:{name:'Michael King Jr.',date:'1929-01-15',time:'12:00',city:'Atlanta, USA',lat:'33.749',lon:'-84.388',tz:'America/Chicago'}}
+,
+ {key:'creator',role:'Created this app',label:'Anish',first:'Anish',who:'the person who created this app (hi)',
+  v:{name:'Anish Ghosh',date:'',time:'',moon:'Capricorn',rising:'Cancer',type:'Generator',auth:'Sacral',profile:'6/2',enn:'4'},
+  derived:{sun:'Gemini',lp:8,expr:9,soul:7,py2026:7,animal:4,element:'Metal',
+    v:{name:'Anish Ghosh',moon:'Capricorn',rising:'Cancer',type:'Generator',auth:'Sacral',profile:'6/2',enn:'4'},
+    bg:{type:'Generator',auth:'Sacral',profile:'6/2',defined:['G','Sacral'],channels:[[15,5]],defn:'Single Definition',crossName:'Left Angle Cross of Education',cross:[],P:{},D:{},priv:[15,5]}}}
+];
+let fig=FIGURES[0];
+const figValues=f=>({unk:false,moon:'',rising:'',type:'',auth:'',profile:'',enn:'',...f.v});
+const KEY='selfmap-v1';
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+const T='︎';
+
+function fill(sel,opts,blank){$(sel).innerHTML=(blank?`<option value="">${blank}</option>`:'')+opts.map(o=>Array.isArray(o)?`<option value="${o[0]}">${o[1]}</option>`:`<option>${o}</option>`).join('')}
+fill('f-moon',SIGNS.map(s=>s.n),'Not sure');
+fill('f-rising',SIGNS.map(s=>s.n),'Not sure');
+fill('f-type',Object.keys(TYPES),'Not sure');
+fill('f-auth',Object.keys(AUTH),'Not sure');
+fill('f-profile',PROFILES,'Not sure');
+fill('f-enn',Object.entries(ENN).map(([k,v])=>[k,`${k} · ${v[0]}`]),'Not sure');
+
+CITIES.sort((a,b)=>a.n.localeCompare(b.n));
+let ZONES;try{ZONES=Intl.supportedValuesOf('timeZone')}catch(e){ZONES=[...new Set(CITIES.map(c=>c.tz))].sort()}
+const LOCALTZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone}catch(e){return 'UTC'}})();
+ZONES=[...new Set([...ZONES,...CITIES.map(c=>c.tz),LOCALTZ])].sort();
+fill('f-tz',[['LMT','Local mean time (births before standard time)'],...ZONES.map(z=>[z,z])]);
+
+const F=['name','date','time','unk','city','lat','lon','tz','moon','rising','type','auth','profile','enn'];
+const BIRTH=['date','time','unk','city','lat','lon','tz'];
+let isExample=true;
+const setF=(k,val)=>{const el=$('f-'+k);if(el.type==='checkbox')el.checked=!!val;else el.value=val??''};
+function load(){let d=null;try{d=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+  isExample=false;if(d&&d.v)F.forEach(k=>setF(k,d.v[k]));else F.forEach(k=>setF(k,''));
+  if(!$('f-tz').value)$('f-tz').value=LOCALTZ;
+  return !!(d&&d.v)}
+function save(v){try{localStorage.setItem(KEY,JSON.stringify({v}))}catch(e){}}
+const read=()=>Object.fromEntries(F.map(k=>{const el=$('f-'+k);return [k,el.type==='checkbox'?el.checked:el.value.trim()]}));
+
+// Chart from birth data; when apply is true it fills the dropdowns with the calculated values.
+let chart=null;
+function calcChart(apply){
+  chart=null;const v=read(),note=$('calcnote');note.classList.remove('warn');
+  const say=(t,w)=>{note.textContent=t;note.classList.toggle('warn',!!w)};
+  if(!window.Astronomy){say('The chart calculator could not load, so pick your values by hand. Free charts: astro.com and jovianarchive.com.',true);return}
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(v.date)){say('Enter your birth date, time and place and the values below fill in automatically.');return}
+  const [y,m,d]=v.date.split('-').map(Number),unk=v.unk||!v.time,tz=v.tz||LOCALTZ;
+  const [h,mi]=unk?[12,0]:v.time.split(':').map(Number);
+  const lat=parseFloat(v.lat),lon=parseFloat(v.lon),hasPlace=isFinite(lat)&&isFinite(lon)&&Math.abs(lat)<=90&&Math.abs(lon)<=180;
+  const toUtc=(hh,mm)=>{if(tz!=='LMT')return HD.zonedToUtc(y,m,d,hh,mm,tz);if(!hasPlace)throw new Error('LMT needs longitude');return new Date(Date.UTC(y,m-1,d,hh,mm)-lon/15*36e5)};
+  let u,bg;try{u=toUtc(h,mi);bg=HD.bodygraph(u)}catch(e){say(tz==='LMT'?'Local mean time needs the birth longitude. Add it in the coordinates panel.':'That time zone or date could not be read. Check the coordinates panel.',true);return}
+  const asc=!unk&&hasPlace?HD.ascendant(u,lat,lon):null;
+  const warn=[];
+  if(unk){const a=HD.bodygraph(toUtc(0,0)),b=HD.bodygraph(toUtc(23,59));
+    if(HD.signOf(a.P.Moon.lon)!==HD.signOf(b.P.Moon.lon))warn.push('Moon sign');
+    if(a.type!==bg.type||b.type!==bg.type)warn.push('Human Design type');
+    if(a.auth!==bg.auth||b.auth!==bg.auth)warn.push('authority');
+    if(a.profile!==bg.profile||b.profile!==bg.profile)warn.push('profile')}
+  chart={u,bg,asc,unk,hasPlace,sunI:HD.signOf(bg.P.Sun.lon),moonI:HD.signOf(bg.P.Moon.lon),sunDeg:bg.P.Sun.lon%30,moonDeg:bg.P.Moon.lon%30,ascDeg:asc==null?null:asc%30};
+  if(apply){
+    setF('moon',SIGNS[chart.moonI].n);setF('rising',asc==null?'':SIGNS[HD.signOf(asc)].n);
+    setF('type',bg.type);setF('auth',bg.auth);
+    if(![...$('f-profile').options].some(o=>o.value===bg.profile))$('f-profile').insertAdjacentHTML('beforeend',`<option>${bg.profile}</option>`);
+    setF('profile',bg.profile)}
+  if(unk)say(`No birth time, so noon was used and rising can't be calculated. ${warn.length?`Your ${warn.length>1?warn.slice(0,-1).join(', ')+' and '+warn.at(-1):warn[0]} ${warn.length>1?'change':'changes'} during that day, so treat ${warn.length>1?'them':'it'} as a guess until you find your time.`:'Your Moon and Human Design come out the same all day, so they are reliable.'}`,true);
+  else if(!hasPlace)say('Add your birth place to calculate your rising sign. The rest is calculated.',true);
+  else{const ad=chart.ascDeg,edge=ad!=null&&(ad>29.5||ad<0.5);
+    say(edge?`Your rising sign sits right on the line between ${SIGNS[HD.signOf(chart.asc-(ad<0.5?1:0))].n} and ${SIGNS[(HD.signOf(chart.asc-(ad<0.5?1:0))+1)%12].n}. A birth time off by a minute or two flips it, so read both.`:'Calculated from your birth date, time and place. Change a value only if a chart reading you trust says otherwise.',edge)}
+}
+
+const digitSum=n=>String(n).split('').reduce((a,b)=>a+ +b,0);
+function reduce(n,keepMaster=true){while(n>9&&!(keepMaster&&(n===11||n===22||n===33)))n=digitSum(n);return n}
+const letterVal=c=>((c.charCodeAt(0)-65)%9)+1;
+function nameNums(name){const L=name.toUpperCase().replace(/[^A-Z]/g,'').split('');if(!L.length)return null;
+  const all=L.reduce((a,c)=>a+letterVal(c),0),vow=L.filter(c=>'AEIOU'.includes(c)).reduce((a,c)=>a+letterVal(c),0);
+  return {expr:reduce(all),soul:vow?reduce(vow):null}}
+function sunSign(m,d){const st=[[1,20,10],[2,19,11],[3,21,0],[4,20,1],[5,21,2],[6,21,3],[7,23,4],[8,23,5],[9,23,6],[10,23,7],[11,22,8],[12,22,9]];
+  let i=9,cusp=false;for(const [sm,sd,si] of st){if(m>sm||(m===sm&&d>=sd))i=si;if(m===sm&&Math.abs(d-sd)<=1)cusp=true}return {s:SIGNS[i],cusp}}
+
+function compute(v){
+  const now=new Date(),cy=now.getFullYear(),cm=now.getMonth()+1,Dv=isExample&&fig.derived;
+  let y=null,m=null,d=null,sun,lp,nn,py,ai,cel,lny=false;
+  if(Dv){// a chart kept as placements only (the creator's): no birth date exists in the page
+    v={...v,...Dv.v};sun={s:SIGNS.find(x=>x.n===Dv.sun),cusp:false};lp=Dv.lp;nn={expr:Dv.expr,soul:Dv.soul};
+    py=(((Dv.py2026-1+(cy-2026))%9)+9)%9+1;ai=Dv.animal;cel=Dv.element}
+  else{
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(v.date))return null;
+  [y,m,d]=v.date.split('-').map(Number);
+  sun=chart?{s:SIGNS[chart.sunI],cusp:false}:sunSign(m,d);
+  lp=reduce(reduce(m)+reduce(d)+reduce(digitSum(y)));
+  nn=v.name?nameNums(v.name):null;
+  py=reduce(reduce(m)+reduce(d)+reduce(digitSum(cy)),false);
+  ai=((y-4)%12+12)%12;cel=ELEM5[((y%10)+10)%10];
+  lny=m===1||(m===2&&d<=20)}
+  const pm=reduce(py+cm,false);
+  const animal=ANIMALS[ai];
+  const nowAnimal=ANIMALS[((cy-4)%12+12)%12][0],nowEl=ELEM5[cy%10];
+  const moon=SIGNS.find(s=>s.n===v.moon),rising=SIGNS.find(s=>s.n===v.rising);
+  const type=TYPES[v.type],auth=AUTH[v.auth],prof=v.profile?v.profile.split('/').map(Number):null,enn=ENN[v.enn];
+  const P=[];// placements on the map
+  P.push({sys:'Sun',val:sun.s.n,tags:sun.s.tags});
+  if(moon)P.push({sys:'Moon',val:moon.n,tags:moon.tags});
+  if(rising)P.push({sys:'Rising',val:rising.n,tags:rising.tags});
+  P.push({sys:'Life Path',val:lp,tags:NUMS[lp].tags});
+  if(nn){P.push({sys:'Expression',val:nn.expr,tags:NUMS[nn.expr].tags});if(nn.soul)P.push({sys:'Soul Urge',val:nn.soul,tags:NUMS[nn.soul].tags})}
+  if(type)P.push({sys:'HD Type',val:v.type.replace('Manifesting Generator','Man. Gen.'),tags:type.tags});
+  if(prof)P.push({sys:'Profile',val:v.profile,tags:[]});
+  P.push({sys:'Chinese',val:cel+' '+animal[0],tags:animal[2]});
+  if(enn)P.push({sys:'Enneagram',val:v.enn+' · '+enn[0],tags:enn[3]});
+  const tally={};P.forEach(p=>p.tags.forEach(t=>{(tally[t]=tally[t]||[]).push(p.sys+' '+p.val)}));
+  const themes=Object.entries(tally).sort((a,b)=>b[1].length-a[1].length).filter(x=>x[1].length>=2).slice(0,3);
+  const els={Fire:0,Earth:0,Air:0,Water:0};[sun.s,moon,rising].forEach(s=>{if(s)els[s.el]++});
+  return {v,y,m,d,cy,cm,sun,lp,nn,py,pm,animal,cel,lny,nowAnimal,nowEl,moon,rising,type,auth,prof,enn,P,themes,els};
+}
+
+// Placements on the wheel, each with the card text it shows when selected.
+const CN={Rat:'鼠',Ox:'牛',Tiger:'虎',Rabbit:'兔',Dragon:'龍',Snake:'蛇',Horse:'馬',Goat:'羊',Monkey:'猴',Rooster:'雞',Dog:'狗',Pig:'豬'};
+const plain=t=>t.replace(/ \(a master number\)/,'');
+const role=s=>'The '+s.replace(/^an? /,'').split(' who')[0];
+function placements(c){
+  const S=c.sun.s,L=NUMS[c.lp],P=[];
+  P.push({id:'sun',system:'Astrology',role:'Sun',value:S.n,mark:S.g+T,title:role(S.core),text:`You are ${S.core}. At your best you are ${S.mask}. Watch for ${S.shadow}.`,themes:S.tags});
+  if(c.moon)P.push({id:'moon',system:'Astrology',role:'Moon',value:c.moon.n,mark:c.moon.g+T,title:'What you need',text:`Emotionally you need ${c.moon.need}. When that's missing, everything else feels harder.`,themes:c.moon.tags});
+  if(c.rising)P.push({id:'rising',system:'Astrology',role:'Rising',value:c.rising.n,mark:c.rising.g+T,title:'The first impression',text:`People first read you as ${c.rising.mask}. It's your doorway, not your whole house.`,themes:c.rising.tags});
+  P.push({id:'lp',system:'Numerology',role:'Life Path',value:String(c.lp),mark:String(c.lp),title:cap(plain(L.t)),text:`Your life is teaching you ${plain(L.t)}. Your gift is ${L.gift}; the trap is ${L.sh}.`,themes:L.tags});
+  if(c.nn){const E=NUMS[c.nn.expr];P.push({id:'expr',system:'Numerology',role:'Expression',value:String(c.nn.expr),mark:String(c.nn.expr),title:cap(plain(E.t)),text:`Your name points to natural talent for ${plain(E.t)}, especially ${E.gift}.`,themes:E.tags});
+    if(c.nn.soul){const U=NUMS[c.nn.soul];P.push({id:'soul',system:'Numerology',role:'Soul Urge',value:String(c.nn.soul),mark:String(c.nn.soul),title:'What you want most',text:`Under everything, you want ${U.d}.`,themes:U.tags})}}
+  if(c.type)P.push({id:'type',system:'Human Design',role:'HD Type',value:c.v.type,short:c.v.type.replace('Manifesting Generator','Man. Gen.'),mark:'◉',title:`Strategy: ${c.type.s.toLowerCase()}`,text:`${c.type.d} When aligned you feel ${c.type.sig.toLowerCase()}. ${c.type.ns} is the signal you've drifted.`,themes:c.type.tags});
+  if(c.prof){const [a,b]=c.prof;P.push({id:'profile',system:'Human Design',role:'Profile',value:`${c.v.profile} ${LINES[a][0]} / ${LINES[b][0]}`,short:c.v.profile,mark:c.v.profile,title:`${LINES[a][0]} / ${LINES[b][0]}`,text:`Consciously, ${LINES[a][1]}. Less visibly, ${LINES[b][1]}.`,themes:[]})}
+  if(c.auth)P.push({id:'auth',system:'Human Design',role:'Authority',value:c.v.auth,short:c.v.auth.replace('Self-Projected','Self-Proj.').replace(' (Outer)',''),mark:'≋',title:'How you decide',text:`${c.auth[0]} Try this: ${c.auth[1].charAt(0).toLowerCase()+c.auth[1].slice(1)}`,themes:[]});
+  P.push({id:'chinese',system:'Chinese zodiac',role:'Chinese year',value:`${c.cel} ${c.animal[0]}`,short:c.animal[0],mark:CN[c.animal[0]],title:cap(c.animal[1]),text:`Others sense you as ${c.animal[1]}. ${c.cel} sets the tone of how that shows up.${c.lny?' You were born near Lunar New Year, so check whether you are the previous sign.':''}`,themes:c.animal[2]});
+  if(c.enn)P.push({id:'enn',system:'Enneagram',role:'Enneagram',value:`${c.v.enn} ${c.enn[0]}`,short:c.v.enn,mark:c.v.enn,title:cap(c.enn[1]),text:`Your core motivation is ${c.enn[1]}. Growth edge: ${c.enn[2]} Watch for ${c.enn[4]}.`,themes:c.enn[3]});
+  return P;
+}
+
+const CORE_R=60;
+// Shrink the center name until it fits inside the core circle with a margin.
+function fitCore(root){(root||document).querySelectorAll('.core-t').forEach(t=>{const base=26,max=CORE_R*2*.78;t.style.fontSize=base+'px';
+  let fs=base;for(let i=0;i<6;i++){let w=0;try{w=t.getComputedTextLength()}catch(e){}if(!w||w<=max)break;fs*=max/w*.98;t.style.fontSize=fs.toFixed(2)+'px'}})}
+const GHOST=[['sun','Sun','☉'],['moon','Moon','☽'],['rising','Rising','↑'],['lp','Life Path','#'],['expr','Expression','#'],['soul','Soul Urge','#'],['type','HD Type','◉'],['profile','Profile','?'],['auth','Authority','≋'],['chinese','Chinese year','?'],['enn','Enneagram','?']].map(([id,role,mark])=>({id,role,value:'',short:'',mark,themes:[]}));
+// Wheel: placements on a ring; each shared theme is a concentric orbit. Members drop a radial spoke to their orbit,
+// and the orbit is drawn only over the shortest arc covering its members, so no two connectors cross or overlap.
+function wheelSVG(P,themes,first){
+  const C=260,R=178,n=P.length,TAU=Math.PI*2,f=x=>x.toFixed(2);
+  const ang=i=>(i/n)*TAU-Math.PI/2,pt=(r,a)=>`${f(C+r*Math.cos(a))} ${f(C+r*Math.sin(a))}`;
+  const ticks=Array.from({length:72},(_,i)=>{const a=i/72*TAU,r2=R+(i%6?15:22);return `<line x1="${f(C+(R+10)*Math.cos(a))}" y1="${f(C+(R+10)*Math.sin(a))}" x2="${f(C+r2*Math.cos(a))}" y2="${f(C+r2*Math.sin(a))}" class="tick"/>`}).join('');
+  const orbits=themes.slice(0,5).map((t,k)=>{
+    const r=R-34-k*19,mem=P.map((p,i)=>({p,i})).filter(x=>x.p.themes.includes(t.k));
+    const angs=mem.map(x=>(ang(x.i)+TAU)%TAU).sort((a,b)=>a-b);
+    let gap=-1,s=0;angs.forEach((a,i)=>{const nx=i===angs.length-1?angs[0]+TAU:angs[i+1];if(nx-a>gap){gap=nx-a;s=(i+1)%angs.length}});
+    const a0=angs[s],span=TAU-gap;
+    const arc=`M${pt(r,a0)} A${r} ${r} 0 ${span>Math.PI?1:0} 1 ${pt(r,a0+span)}`;
+    return `<g class="orbit" data-theme="${t.k}"><circle cx="${C}" cy="${C}" r="${r}" class="track"/><path d="${arc}" class="arc" pathLength="1"/>`
+      +mem.map(x=>`<path d="M${pt(R-22,ang(x.i))} L${pt(r,ang(x.i))}" class="spoke" pathLength="1"/>`).join('')
+      +mem.map(x=>{const [jx,jy]=pt(r,ang(x.i)).split(' ');return `<circle cx="${jx}" cy="${jy}" r="3" class="joint"/>`}).join('')+'</g>'}).join('');
+  const nodes=P.map((p,i)=>{const a=ang(i),co=Math.cos(a),x=C+R*co,y=C+R*Math.sin(a),lx=C+(R+40)*co,ly=C+(R+40)*Math.sin(a);
+    const anc=Math.abs(co)<.3?'middle':co>0?'start':'end';
+    return `<g class="node" data-id="${p.id}" data-themes="${p.themes.join(' ')}" tabindex="0" role="button" aria-label="${esc(p.role)}: ${esc(p.value)}" style="--d:${i*60}ms">
+      <circle cx="${f(x)}" cy="${f(y)}" r="30" class="halo"/><circle cx="${f(x)}" cy="${f(y)}" r="21" class="dot"/>
+      <text x="${f(x)}" y="${f(y+6)}" text-anchor="middle" class="mark${p.mark.length>2?' small':''}">${esc(p.mark)}</text>
+      <text x="${f(lx)}" y="${f(ly-3)}" text-anchor="${anc}" class="lab-s">${esc(p.role.toUpperCase())}</text>
+      <text x="${f(lx)}" y="${f(ly+14)}" text-anchor="${anc}" class="lab-v">${esc(p.short||p.value)}</text></g>`}).join('');
+  return `<svg viewBox="-75 -10 670 540" role="group" aria-label="Chart of your placements. Select one to read it.">
+    <g class="sm-ring"><circle cx="${C}" cy="${C}" r="${R+10}" class="ring"/>${ticks}</g><g>${orbits}</g>
+    <circle cx="${C}" cy="${C}" r="${CORE_R}" class="core"/><text x="${C}" y="${C}" dy=".35em" text-anchor="middle" class="core-t">${esc(first)}</text>${nodes}</svg>`;
+}
+
+// Bodygraph drawn from the calculated chart: every possible channel faint, defined channels in clay.
+const BG={Head:['p','100,10 76,45 124,45',100,33],Ajna:['p','76,56 124,56 100,90',100,68],Throat:['r','82,100,36,36',100,118],G:['p','100,143 122,165 100,187 78,165',100,165],
+  Heart:['p','132,176 156,168 150,192',146,179],Spleen:['p','22,200 58,220 22,240',34,220],'Solar Plexus':['p','178,200 142,220 178,240',166,220],
+  Sacral:['r','82,205,36,31',100,220],Root:['r','82,255,36,34',100,272]};
+const MOTORS=['Sacral','Heart','Solar Plexus','Root'];
+// Plain-language reference for the bodygraph explorer. Keynotes follow the common Human Design naming.
+const CENTER_INFO={
+ Head:['Inspiration','questions, inspiration and the mental pressure to figure things out','You have a steady source of inspiration and your own kind of questions.','You pick up other people\'s questions. Your wisdom is telling which ones are worth answering; the trap is thinking about things that don\'t matter to you.'],
+ Ajna:['Thinking','processing, concepts and opinions','You think in a consistent, reliable way that others can count on.','Your mind is flexible and can hold many points of view. The trap is pretending to be certain.'],
+ Throat:['Expression','speaking, acting and making things happen','You have a consistent voice and way of getting things said and done.','Your voice shifts with who you\'re around. The trap is talking just to be noticed; you land best when invited.'],
+ G:['Identity and direction','love, identity and the direction of your life','You have a fixed sense of who you are and where you\'re heading.','Your sense of self is fluid, so places and people shape you. Choosing the right environment is everything.'],
+ Heart:['Willpower','willpower, self-worth and promises','You have reliable willpower and can make and keep commitments.','You have nothing to prove. The trap is overpromising to show you\'re worth something.'],
+ Sacral:['Life force','work energy, sexuality and the gut "uh-huh" (yes) or "nuh-uh" (no)','You have sustainable energy for work you actually respond to.','You amplify other people\'s energy. Learn when enough is enough, and rest before you crash.'],
+ 'Solar Plexus':['Emotions','feelings, moods and emotional waves','You ride an emotional wave. Clarity comes with time, not in the heat of the moment.','You feel other people\'s emotions strongly, sometimes as if they were yours. The trap is avoiding conflict to keep the peace.'],
+ Spleen:['Intuition and health','intuition, immunity, survival instincts and fear','You have steady instincts and a consistent sense of well-being.','You\'re sensitive to what\'s healthy and what isn\'t. The trap is holding on to what\'s bad for you because it feels familiar.'],
+ Root:['Pressure','adrenaline, stress and the push to get moving','You handle pressure in a steady way and can work well under it.','You amplify the stress around you. The trap is rushing just to make the pressure stop.']};
+const GATE_NAMES={1:'Self-Expression',2:'Direction',3:'Innovation',4:'Answers',5:'Rhythm',6:'Friction',7:'Leadership',8:'Contribution',9:'Focus',10:'Behavior',11:'Ideas',12:'Caution',13:'The Listener',14:'Power Skills',15:'Extremes',16:'Skills',17:'Opinions',18:'Correction',19:'Wanting',20:'The Now',21:'Control',22:'Openness',23:'Assimilation',24:'Rationalization',25:'Innocence',26:'The Trickster',27:'Caring',28:'The Game Player',29:'Perseverance',30:'Desire',31:'Leading',32:'Continuity',33:'Privacy',34:'Power',35:'Change',36:'Crisis',37:'Friendship',38:'The Fighter',39:'Provocation',40:'Aloneness',41:'Contraction',42:'Growth',43:'Insight',44:'Alertness',45:'The Gatherer',46:'Determination',47:'Realization',48:'Depth',49:'Principles',50:'Values',51:'Shock',52:'Stillness',53:'Beginnings',54:'Ambition',55:'Spirit',56:'Stimulation',57:'Intuition',58:'Vitality',59:'Sexuality',60:'Acceptance',61:'Mystery',62:'Detail',63:'Doubt',64:'Confusion'};
+const CH_INFO={'1-8':['Inspiration','Creative self-expression that inspires others by example.'],'2-14':['The Beat','A steady inner compass that directs energy and resources.'],'3-60':['Mutation','Energy that brings something new through in pulses, after periods of waiting.'],'4-63':['Logic','Doubt that turns into tested answers and reliable patterns.'],'5-15':['Rhythm','Being in flow with natural rhythms, routines and timing.'],'6-59':['Mating','The drive for intimacy: bonding, creating and breaking through barriers.'],'7-31':['The Alpha','Leadership the group chooses, guiding people toward the future.'],'9-52':['Concentration','Calm, focused energy for detail and depth.'],'10-20':['Awakening','Living your own convictions out loud, in the moment.'],'10-34':['Exploration','Following your own convictions with your own power.'],'10-57':['Perfected Form','Intuitive self-love that keeps you alive and well.'],'11-56':['Curiosity','A seeker who turns ideas and experiences into stories.'],'12-22':['Openness','Emotional expression that moves people when the mood is right.'],'13-33':['The Prodigal','A witness who listens, remembers, and later tells the story.'],'16-48':['The Wavelength','Talent deepened into mastery through practice and repetition.'],'17-62':['Acceptance','Organizing opinions into clear, detailed explanations.'],'18-58':['Judgment','The vital urge to correct and improve what isn\'t working.'],'19-49':['Synthesis','Sensitivity to what people need, and principles about who belongs.'],'20-34':['Charisma','Busy, powerful energy that turns thought into action right now.'],'20-57':['The Brainwave','Intuition that speaks up in the moment.'],'21-45':['Money','Managing resources and material well-being for your people.'],'23-43':['Structuring','Unique insights that need the right timing to be understood.'],'24-61':['Awareness','A thinker who turns mystery into inner knowing.'],'25-51':['Initiation','The courage to go first and leap into the unknown.'],'26-44':['Surrender','Carrying lessons from the past; a natural persuader.'],'27-50':['Preservation','Caring for others and upholding shared values.'],'28-38':['Struggle','Finding purpose by fighting for what makes life meaningful.'],'29-46':['Discovery','Committing fully and finding success through the experience itself.'],'30-41':['Recognition','Hunger for new experiences, and the fuel of feeling.'],'32-54':['Transformation','Ambition to rise, with an instinct for what will last.'],'34-57':['Power','Survival instinct joined with strong, immediate response.'],'35-36':['Transitoriness','Learning through new emotional experiences; a jack of all trades.'],'37-40':['Community','Loyalty, bargains and mutual support in families and groups.'],'39-55':['Emoting','A moody spirit; provocation that stirs feeling and creativity.'],'42-53':['Maturation','Starting cycles and seeing them through to the end.'],'47-64':['Abstraction','Sorting past experience into meaning, often through images.']};
+const chKey=([a,b])=>Math.min(a,b)+'-'+Math.max(a,b);
+// Larger layout for the explorer (viewBox 250 x 452): center positions and shapes.
+// Detailed bodygraph (viewBox 320 x 622): centers drawn as on a standard chart, gate numbers inside each center
+// on the side facing their channel; channels run edge to edge behind the centers.
+const BGX={Head:{pts:'160,14 202,84 118,84',lab:[160,52]},Ajna:{pts:'118,100 202,100 160,180',lab:[160,131]},
+  Throat:{pts:'124,204 196,204 196,276 124,276',lab:[160,243]},G:{pts:'160,284 206,330 160,376 114,330',lab:[160,333]},
+  Heart:{pts:'236,346 262,394 210,394',lab:[236,407]},Spleen:{pts:'26,418 26,522 98,470',lab:[40,473]},
+  'Solar Plexus':{pts:'294,418 294,522 222,470',lab:[280,468],two:['Solar','Plexus']},
+  Sacral:{pts:'124,430 196,430 196,502 124,502',lab:[160,469]},Root:{pts:'124,540 196,540 196,612 124,612',lab:[160,580]}};
+const GATE_POS={64:[138,72],61:[160,72],63:[182,72],47:[138,112],24:[160,112],4:[182,112],17:[145,140],43:[160,160],11:[175,140],
+  62:[140,214],23:[160,214],56:[180,214],16:[134,230],20:[134,248],35:[186,228],12:[186,242],45:[186,256],31:[144,266],8:[160,266],33:[176,266],
+  1:[160,298],7:[142,314],13:[178,314],10:[128,330],25:[192,330],15:[142,346],46:[178,346],2:[160,362],
+  21:[236,364],51:[221,385],26:[236,386],40:[251,385],
+  48:[40,432],57:[54,446],44:[66,458],50:[80,470],32:[66,482],28:[54,494],18:[40,508],
+  36:[280,432],22:[266,446],37:[254,458],6:[240,470],49:[254,482],55:[266,494],30:[280,508],
+  5:[140,440],14:[160,440],29:[180,440],34:[134,457],27:[134,476],59:[186,466],42:[144,492],3:[160,492],9:[176,492],
+  53:[140,550],60:[160,550],52:[180,550],54:[134,567],38:[134,584],58:[134,601],19:[186,567],39:[186,584],41:[186,601]};
+const CH_CURVE={'20-34':[80,346],'26-44':[160,406],'12-22':[276,320],'35-36':[290,290]};
+function gateActs(bg){const m={};[['P',bg.P],['D',bg.D]].forEach(([side,acts])=>{for(const pl in acts){const {gate,line}=acts[pl];(m[gate]=m[gate]||[]).push({side,pl,line})}});(bg.priv||[]).forEach(g=>(m[g]=m[g]||[]).push({side:'X',pl:'',line:0}));return m}
+function explorerSVG(bg){
+  const acts=gateActs(bg),def=new Set(bg.defined),defCh=new Set(bg.channels.map(chKey)),f=n=>n.toFixed(1);
+  const cls=g=>{const a=acts[g];if(!a)return '';if(a.every(x=>x.side==='X'))return 'x';const p=a.some(x=>x.side==='P'),d=a.some(x=>x.side==='D');return p&&d?'b':p?'p':'d'};
+  const tracks=[],halves=[],hits=[];
+  HD.CH.forEach(ch=>{const k=chKey(ch),[a,b]=k.split('-').map(Number),A=GATE_POS[a],B=GATE_POS[b],C=CH_CURVE[k];
+    const d=C?`M${A} Q${C} ${B}`:`M${A} L${B}`,mid=C?[(A[0]+2*C[0]+B[0])/4,(A[1]+2*C[1]+B[1])/4]:[(A[0]+B[0])/2,(A[1]+B[1])/2];
+    tracks.push(`<path class="ch${defCh.has(k)?' def':''}" data-ch="${k}" d="${d}"/>`);
+    [[a,A],[b,B]].forEach(([g,P])=>{const c=cls(g);if(!c)return;const h=C?`M${P} Q${f((P[0]+C[0])/2)},${f((P[1]+C[1])/2)} ${f(mid[0])},${f(mid[1])}`:`M${P} L${f(mid[0])},${f(mid[1])}`;
+      halves.push(`<path class="half ${c}" data-ch="${k}" d="${h}"/>`)});
+    hits.push(`<path class="hit" data-ch="${k}" d="${d}"><title>Channel ${k}: ${CH_INFO[k][0]}</title></path>`)});
+  const centers=Object.entries(BGX).map(([c,o])=>{const on=def.has(c),[lx,ly]=o.lab,cl=`cx${on?' on':''}${MOTORS.includes(c)?' motor':''}`;
+    const label=o.two?`<text class="cl${on?' on':''}" x="${lx}" y="${ly}">${o.two[0]}</text><text class="cl${on?' on':''}" x="${lx}" y="${ly+8}">${o.two[1]}</text>`:`<text class="cl${on&&c!=='Heart'?' on':''}" x="${lx}" y="${ly}">${c}</text>`;
+    return `<polygon class="${cl}" data-center="${c}" tabindex="0" role="button" aria-label="${c} center, ${on?'defined':'open'}" points="${o.pts}" stroke-linejoin="round"/>${label}`}).join('');
+  const gates=Object.entries(GATE_POS).map(([g,[x,y]])=>{const c=cls(+g),inDef=def.has(HD.G2C[g]);
+    return `<g class="gt ${c||'off'}${inDef?' indef':''}" data-gate="${g}" tabindex="0" role="button" aria-label="Gate ${g}, ${GATE_NAMES[g]}${c?', active':''}"><circle cx="${x}" cy="${y}" r="${c?6.2:5.6}"/><text x="${x}" y="${f(y+2.1)}">${g}</text></g>`}).join('');
+  return `<svg class="bgx" viewBox="0 0 320 622" role="group" aria-label="Detailed bodygraph. Select a center, channel or gate to read about it.">
+    <g class="tracks">${tracks.join('')}</g><g class="halves">${halves.join('')}</g><g>${hits.join('')}</g><g>${centers}</g><g>${gates}</g></svg>`}
+const PLANET_NOTE={Sun:'Sun',Earth:'Earth',Moon:'Moon','North Node':'North Node','South Node':'South Node',Mercury:'Mercury',Venus:'Venus',Mars:'Mars',Jupiter:'Jupiter',Saturn:'Saturn',Uranus:'Uranus',Neptune:'Neptune',Pluto:'Pluto'};
+function explorerCard(bg,sel){
+  const acts=gateActs(bg),def=new Set(bg.defined),defCh=new Set(bg.channels.map(chKey)),C=HD.G2C;
+  const actLine=g=>(acts[g]||[]).map(a=>a.side==='X'?'Active (which planet put it here is kept private)':`${a.side==='P'?'Conscious':'Unconscious'} · ${PLANET_NOTE[a.pl]} (line ${a.line})`);
+  const gl=g=>`<button type="button" class="lnk" data-go="gate:${g}">${g} ${GATE_NAMES[g]}</button>`;
+  const cl=k=>`<button type="button" class="lnk" data-go="channel:${k}">${k} ${CH_INFO[k][0]}</button>`;
+  if(!sel)return `<p class="k">How to read a bodygraph</p><h4>Your energy wiring</h4>
+    <ul><li><b>9 shapes are centers.</b> Each one runs a part of life, like emotions, willpower or intuition.</li>
+    <li><b>Colored = defined.</b> That part of you works the same way every day, and other people feel it from you.</li>
+    <li><b>White = open.</b> Here you take in and amplify the people around you. It's where you're most sensitive, and where you can grow the most wisdom.</li>
+    <li><b>Lines are channels.</b> A fully colored line joins two centers into a lasting trait. A half-colored line is a "hanging gate": a quality reaching for its other half, often found in other people.</li>
+    <li><b>Numbered dots are the 64 gates</b>, one for each I Ching hexagram. <b>Black</b> = conscious (planets at your birth), <b>red</b> = unconscious (planets about 88 days earlier), <b>gold</b> = both.</li>
+    <li><b>Your type comes from the wiring.</b> A defined Sacral makes a Generator; a motor (Sacral, Heart, Solar Plexus, Root) wired to the Throat makes a Manifestor or Manifesting Generator; no Sacral and no motor to Throat makes a Projector; nothing defined makes a Reflector.</li></ul>
+    <p class="muted">Tap any center, line or number on the chart to read it.</p>`;
+  const [kind,id]=sel.split(':');
+  if(kind==='center'){const I=CENTER_INFO[id],on=def.has(id),gs=Object.keys(C).map(Number).filter(g=>C[g]===id),mine=gs.filter(g=>acts[g]),chs=bg.channels.filter(ch=>ch.some(g=>C[g]===id)).map(chKey);
+    return `<p class="k">Center${MOTORS.includes(id)?' · motor':''}${['Ajna','Spleen','Solar Plexus'].includes(id)?' · awareness':''}${id==='Head'||id==='Root'?' · pressure':''}</p><h4>${id} · ${I[0]}</h4>
+      <p><span class="tag${on?'':' open'}">${on?'Defined':'Open'}</span></p><p>Runs ${I[1]}.</p><p><b>For you:</b> ${on?I[2]:I[3]}</p>
+      ${chs.length?`<p class="muted">Defined by ${chs.map(cl).join(', ')}.</p>`:''}
+      <p class="muted">Gates here: ${gs.map(g=>acts[g]?`<b>${gl(g)}</b>`:gl(g)).join(' · ')}${mine.length?'':' (none active)'}</p>`}
+  if(kind==='gate'){const g=+id,a=actLine(g),chs=HD.CH.filter(ch=>ch.includes(g));
+    return `<p class="k">Gate ${g} · ${C[g]} center</p><h4>${GATE_NAMES[g]}</h4>
+      <p><span class="tag${a.length?'':' open'}">${a.length?'Active':'Not active'}</span></p>
+      ${a.length?`<ul>${a.map(x=>`<li>${x}</li>`).join('')}</ul>`:'<p class="muted">No planet sat in this gate for you, so it\'s a quality you experience through others.</p>'}
+      <p class="muted">Part of ${chs.map(ch=>{const k=chKey(ch);return cl(k)+(defCh.has(k)?' (defined)':'')}).join(', ')}. ${C[g]} runs ${CENTER_INFO[C[g]][1]}.</p>`}
+  const [a,b]=id.split('-').map(Number),I=CH_INFO[id],on=defCh.has(id),half=!on&&(acts[a]||acts[b]);
+  return `<p class="k">Channel ${id} · ${C[a]} to ${C[b]}</p><h4>${I[0]}</h4>
+    <p><span class="tag${on?'':' open'}">${on?'Defined':half?'Half (hanging gate)':'Not defined'}</span></p><p>${I[1]}</p>
+    <p class="muted">${on?'Both gates are active, so this is a consistent part of you and it defines both centers.':half?`You have ${acts[a]?gl(a):gl(b)}. When someone with ${acts[a]?gl(b):gl(a)} is around, this channel lights up between you.`:'Neither gate is active, so this is open territory for you.'}</p>
+    <p class="muted">Gates: ${gl(a)} · ${gl(b)}</p>`}
+let bgOpen=false,bgSel=null;
+function bindExplorer(bg){const root=document.querySelector('.bg-explore');if(!root)return;const card=root.querySelector('.bgx-card'),svg=root.querySelector('svg');
+  const mark=()=>{svg.querySelectorAll('.sel').forEach(e=>e.classList.remove('sel'));if(!bgSel)return;const [k,id]=bgSel.split(':');
+    if(k==='center')svg.querySelector(`[data-center="${id}"]`)?.classList.add('sel');
+    if(k==='gate')svg.querySelector(`[data-gate="${id}"] circle`)?.classList.add('sel');
+    if(k==='channel')svg.querySelectorAll(`path.ch[data-ch="${id}"]`).forEach(e=>e.classList.add('sel'))};
+  const show=v=>{bgSel=v;card.innerHTML=explorerCard(bg,bgSel)+(bgSel?'<p><button type="button" class="lnk" data-go="">← How to read it</button></p>':'');card.classList.remove('swap');void card.offsetWidth;card.classList.add('swap');mark();
+    card.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>show(b.dataset.go||null)))};
+  svg.addEventListener('click',e=>{const t=e.target.closest('[data-center],[data-gate],[data-ch]');if(!t)return;show(t.dataset.center?'center:'+t.dataset.center:t.dataset.gate?'gate:'+t.dataset.gate:'channel:'+t.dataset.ch)});
+  svg.addEventListener('keydown',e=>{if(e.key!=='Enter'&&e.key!==' ')return;const t=e.target.closest('[data-center],[data-gate]');if(!t)return;e.preventDefault();show(t.dataset.center?'center:'+t.dataset.center:'gate:'+t.dataset.gate)});
+  show(bgSel)}
+function bodySVG(bg){
+  const def=new Set(bg.defined),pair=([a,b])=>[HD.G2C[a],HD.G2C[b]].sort().join('|');
+  const seg=k=>{const [a,b]=k.split('|');return `<line x1="${BG[a][2]}" y1="${BG[a][3]}" x2="${BG[b][2]}" y2="${BG[b][3]}"/>`};
+  const all=[...new Set(HD.CH.map(pair))],on=[...new Set(bg.channels.map(pair))];
+  const shape=c=>{const [t,g]=BG[c],cls=`c${def.has(c)?' on':''}${MOTORS.includes(c)?' motor':''}`;
+    if(t==='p')return `<polygon points="${g}" class="${cls}"/>`;const [x,y,w,h]=g.split(',');return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" class="${cls}"/>`};
+  return `<svg viewBox="0 0 200 300" role="img" aria-label="Bodygraph. Defined centers: ${bg.defined.join(', ')||'none'}"><g class="bg-lines">${all.map(seg).join('')}</g><g class="bg-ch">${on.map(seg).join('')}</g>${Object.keys(BG).map(shape).join('')}</svg>`;
+}
+
+let selId=null,selTheme=null,selTab=0,lastKey='',RD=null;
+function render(){
+  const v=read();const c=compute(v);const out=$('out');
+  const a=$('auto');
+  document.body.classList.toggle('is-empty',!c);
+  if(!c){a.innerHTML='';lastKey='';
+    if(out.querySelector('.spawn-empty'))return; // keep the running carousel while someone types
+    const card=(f,dup)=>{const sg=f.derived?SIGNS.find(x=>x.n===f.derived.sun):sunSign(+f.v.date.slice(5,7),+f.v.date.slice(8,10)).s;
+      return `<button type="button" class="fig-card${dup?' dup':''}" data-fig="${f.key}"${dup?' tabindex="-1" aria-hidden="true"':''}><span class="gl">${sg.g+T}</span><span><b>${esc(f.label)}</b><small>${esc(f.role)}</small></span></button>`};
+    out.innerHTML=`<div class="spawn-empty"><p class="se-lead">Enter your birth date to draw your map,<br><em>or spawn as someone below.</em></p>
+      <p class="se-sub">Tap a card to load their chart (hover to pause), or fill in the form to draw yours.</p>
+      <div class="mq-wrap"><button type="button" class="mq-arrow prev" data-dir="prev" aria-label="Previous people">‹</button>
+      <div class="marquee"><div class="mq-track" role="list">${FIGURES.map(f=>card(f,false)).join('')}${FIGURES.map(f=>card(f,true)).join('')}</div></div>
+      <button type="button" class="mq-arrow next" data-dir="next" aria-label="More people">›</button></div>
+      <div class="sm-night ghost" aria-label="Empty map. Your placements appear here once you add a birth date."><canvas class="sm-stars" aria-hidden="true"></canvas>
+        <div class="sm-grid"><div class="sm-wheel">${wheelSVG(GHOST,[],'You').replace(/ tabindex="0" role="button"/g,'')}</div>
+        <div class="sm-side"><div class="ghost-legend"><p class="sm-sys">What fills in</p>
+          <div><b>Astrology</b><span>Sun, Moon and Rising: who you are, what you need, how you come across.</span></div>
+          <div><b>Numerology</b><span>Life Path, Expression and Soul Urge, from your birth date and name.</span></div>
+          <div><b>Human Design</b><span>Type, Profile and Authority: how your energy works and how you decide.</span></div>
+          <div><b>Chinese year & Enneagram</b><span>Your animal and element, plus the Enneagram type you choose.</span></div>
+          <p class="sm-sys" style="margin-top:4px">Lines light up where the systems agree.</p></div></div></div></div></div>`;
+    stars.attach(out.querySelector('.sm-stars'));fitCore(out);
+    out.querySelectorAll('[data-fig]').forEach(b=>b.addEventListener('click',()=>showFigure(b.dataset.fig)));
+    startMarquee();
+    return}
+  const deg=x=>`${Math.floor(x)}°${String(Math.floor((x%1)*60)).padStart(2,'0')}′`;
+  a.innerHTML=(chart?`Sun <b>${deg(chart.sunDeg)} ${c.sun.s.n}</b> · Moon <b>${deg(chart.moonDeg)} ${SIGNS[chart.moonI].n}</b>${chart.ascDeg!=null?` · Rising <b>${deg(chart.ascDeg)} ${SIGNS[HD.signOf(chart.asc)].n}</b>`:''}<br>${chart.bg.type} · ${chart.bg.auth} · ${chart.bg.profile} · ${chart.bg.defn}<br>`
+    :`Sun <b>${c.sun.s.g+T} ${c.sun.s.n}</b>${c.sun.cusp?' (cusp, check your chart)':''} · `)+`Life Path <b>${c.lp}</b>${c.nn?` · Expression <b>${c.nn.expr}</b>${c.nn.soul?` · Soul Urge <b>${c.nn.soul}</b>`:''}`:''} · <b>${c.cel} ${c.animal[0]}</b>${c.lny?' (born near Lunar New Year, you may be the previous sign)':''}`;
+  const L=NUMS[c.lp],S=c.sun.s;
+  const first=isExample?fig.first:((c.v.name||'').split(/\s+/)[0]||'You');
+  const P=placements(c);
+  const themes=Object.keys(TAGS).map(k=>({k,count:P.filter(p=>p.themes.includes(k)).length})).filter(t=>t.count>=2).sort((x,y)=>y.count-x.count);
+  const thesis=`${cap(S.core)}${c.type?`, designed as ${/^[AEIOU]/.test(c.v.type)?'an':'a'} <em>${c.v.type}</em>`:''}, walking a path of <em>${plain(L.t)}</em>.`;
+  const st=[`I am ${S.core}.`];
+  if(c.type)st.push(`I see myself as ${c.type.self}.`);
+  st.push(`My life is teaching me ${plain(L.t)}, and my gift is ${L.gift}.`);
+  if(c.moon)st.push(`Underneath, I need ${c.moon.need}, and I'm allowed to ask for it.`);
+  if(c.auth)st.push(`My decisions are best when I follow my ${c.v.auth.replace(' (Outer)','').toLowerCase()} authority: ${c.auth[0].charAt(0).toLowerCase()+c.auth[0].slice(1).split('.')[0].replace(/\byour\b/g,'my').replace(/\byou\b/g,'I')}.`);
+
+  const elSorted=Object.entries(c.els).sort((x,y)=>y[1]-x[1]);
+  const placed=elSorted.reduce((s,e)=>s+e[1],0),elMax=Math.max(1,elSorted[0][1]);
+  const missing=elSorted.filter(e=>e[1]===0).map(e=>e[0]);
+  const tie=elSorted[0][1]===elSorted[1][1];
+  const elText=placed>=2?(tie?`Your big three are spread across ${elSorted.filter(e=>e[1]>0).map(e=>e[0]).join(', ')}, so no single element dominates.`:`Your big three lean <b>${elSorted[0][0]}</b>: ${ELEMS[elSorted[0][0]][0]} come naturally.`)+(missing.length&&placed===3?` No ${missing.join(' or ')}, so ${missing.map(m=>ELEMS[m][0]).join(' and ')} take conscious practice.`:''):'Add your Moon and Rising to see your element balance.';
+
+  const tt=(c.themes.length?c.themes.map(t=>t[0]):S.tags).slice(0,2);
+  if(tt.length<2)S.tags.concat(L.tags).forEach(t=>{if(tt.length<2&&!tt.includes(t))tt.push(t)});
+  const C1=CHOICE[tt[0]],C2=CHOICE[tt[1]]||C1,E=ELCH[S.el],ME=c.moon?ELCH[c.moon.el]:null;
+  const careers=[...new Set([...C1.car,...C2.car.slice(0,2)])];
+  const loveSigns=E.love.filter(n=>n!==S.n);
+  const watch=[[`Sun in ${S.n}`,cap(S.shadow)],[`Life Path ${c.lp}`,cap(L.sh)]];
+  if(c.type)watch.push([`${c.v.type} not-self`,`${c.type.ns}. When it shows up, pause and return to "${c.type.s.toLowerCase()}".`]);
+  if(c.enn)watch.push([`Enneagram ${c.v.enn}`,cap(c.enn[4])]);
+  if(c.moon)watch.push([`Moon in ${c.moon.n}`,cap(c.moon.shadow)]);
+  const Y=PYEAR[c.py],M=PYEAR[c.pm];
+  const prac=[[`${c.cy} · Personal Year ${c.py}`,Y[2]]];
+  if(c.auth)prac.push([`${c.v.auth} authority`,c.auth[1]]);
+  prac.push([`Life Path ${c.lp}`,L.p]);
+  if(c.type&&/Projector|Reflector/.test(c.v.type))prac.push(['Energy','Rest before you are tired. Your energy is borrowed from others, so recover alone.']);
+  else if(c.type)prac.push(['Energy','Use up your energy on work you respond to, then go to bed tired. That\'s the sign of a good day.']);
+  if(placed===3&&missing.length)prac.push([`Missing ${missing[0]}`,ELEMS[missing[0]][1]]);
+  const list=xs=>`<ul class="sm-list">${xs.map(([k,t])=>`<li><span>${esc(k)}</span>${t}</li>`).join('')}</ul>`;
+  const tabs=[
+    ['Who I am',`<ul class="sm-list">${st.map(s=>`<li>${s}</li>`).join('')}</ul>`,'Read these out loud'],
+    ['Career',`<ul class="sm-chips">${careers.map(x=>`<li>${x}</li>`).join('')}</ul><p>${c.type?HDWORK[c.v.type]+' ':''}Your Life Path ${c.lp} rewards work built on ${L.gift}.</p>`,`${TAGS[tt[0]][0]} + ${TAGS[tt[1]]?TAGS[tt[1]][0]:''}`],
+    ['Wealth',`<p>Money comes most naturally through ${WEALTH[c.lp]}.</p><p>Strategy: ${C1.w}.</p>${c.nn?`<p>Your Expression ${c.nn.expr} suggests income through ${WEALTH[c.nn.expr]}.</p>`:''}`,'Life Path, Expression, themes'],
+    ['Expression',`<p>You're most yourself when ${C1.x}${C2!==C1?`, and ${C2.x}`:''}.</p>${c.prof?`<p>As a ${c.v.profile}, ${LINES[c.prof[0]][1]}. Let that be part of the work, not something to hide.</p>`:''}${c.nn?`<p>Your name carries the gift of ${NUMS[c.nn.expr].gift}.</p>`:''}`,'Themes, Profile, Expression'],
+    ['Places',`<p>${cap(E.pl)}${ME&&ME!==E?`, with some ${ME.pl.split(',')[0]} for your ${c.moon.n} Moon`:''}.</p><p>Culturally: ${C1.pl}.</p>${c.v.type==='Reflector'?'<p>For you, place matters more than anything. Choose by how you feel there after a month.</p>':''}`,'Sun and Moon element'],
+    ['Health',`<p>Your body likes ${E.h}</p>${ME&&ME!==E?`<p>Emotionally (${c.moon.n} Moon): ${ME.h}</p>`:''}${c.type&&/Projector|Reflector/.test(c.v.type)?'<p>Rest is your medicine. You aren\'t built for nonstop output.</p>':c.type?'<p>Spend your energy fully each day, then sleep. Frustration is often a body signal.</p>':''}`,'Element, HD type'],
+    ['Partners',`<p>Look for someone who gives you ${c.moon?c.moon.need:S.mask.split(' and ')[0]+' energy back'}${c.rising?`, and who sees past your ${c.rising.n} first impression`:''}.</p><p>Signs that tend to flow with a ${S.n} Sun: ${loveSigns.join(', ')}.</p>${c.type?`<p>${HDLOVE[c.v.type]}</p>`:''}`,'Moon, Sun element, HD type'],
+    ['Love',`<p>${c.moon?`You feel loved when you get ${c.moon.need}.`:`You feel loved when you're appreciated as ${S.core}.`}${c.nn&&c.nn.soul?` Deep down you want ${NUMS[c.nn.soul].d}.`:''}</p>${c.enn?`<p>In relationships, watch for ${c.enn[4]}. ${c.enn[2]}</p>`:''}<p>Your love lesson: watch for ${S.shadow.split(',')[0]} in the relationship.</p>`,'Moon, Soul Urge, Enneagram'],
+    ['Watch for',list(watch),'Shadows'],
+    ['Practices',list(prac),'For now']
+  ];
+  if(selTab>=tabs.length)selTab=0;
+
+  const nums=[[c.lp,'Life Path',plain(L.t)]];
+  if(c.nn){nums.push([c.nn.expr,'Expression',plain(NUMS[c.nn.expr].t)]);if(c.nn.soul)nums.push([c.nn.soul,'Soul Urge',plain(NUMS[c.nn.soul].t)])}
+  const bg=(isExample&&fig.derived)?fig.derived.bg:(chart&&chart.bg),open9=bg?Object.keys(BG).filter(x=>!bg.defined.includes(x)):[];
+  const bgPanel=bg?`<div class="sm-bgrow">${bodySVG(bg)}<div>
+      <p class="sm-strong">${bg.channels.length?`Channel${bg.channels.length>1?'s':''} ${bg.channels.map(x=>x.join('–')).join(', ')}`:'No defined channels'}</p>
+      <p class="sm-small">${bg.defn} · ${bg.crossName||`cross gates ${bg.cross.slice(0,2).join('/')} | ${bg.cross.slice(2).join('/')}`}</p>
+      <p class="sm-small">${bg.defined.length?`${bg.defined.join(' and ').replace(/ and (?=.* and )/g,', ')} ${bg.defined.length>1?'are':'is'} your constant${bg.defined.length>1?'s':''}`:'Nothing is fixed'}; ${open9.length===1?'the one open center is':`the ${open9.length} open centers are`} where you take in and amplify the people around you.</p></div></div>
+      <p class="bg-read"><i style="background:#d9a94e"></i>colored = fixed in you · <i style="border:1px solid var(--muted)"></i>white = open, where you absorb others · lines = channels, lasting traits.</p>
+      <button type="button" class="bg-toggle" id="bg-toggle" aria-expanded="${bgOpen}">${bgOpen?'Hide the detailed map ▴':'Explore the bodygraph ▾'}</button>`
+    :'<p class="sm-small">Add your birth date to draw the bodygraph.</p>';
+  const monthName=new Date(c.cy,c.cm-1,1).toLocaleString('en',{month:'long'});
+  RD={c,S,L,C1,C2,P,themes,thesis:thesis.replace(/<[^>]+>/g,''),st,careers,elText:elText.replace(/<[^>]+>/g,''),Y,M,watch,prac,bg,first,monthName};
+
+  // Redraw the pop-in animation only when the set of placements changes, not on every keystroke.
+  const key=P.map(p=>p.id+p.value).join();const fresh=key!==lastKey;lastKey=key;
+  if(!P.some(p=>p.id===selId))selId=P[0].id;
+  if(selTheme&&!themes.some(t=>t.k===selTheme))selTheme=null;
+
+  out.innerHTML=`
+  ${(()=>{const row=`<div class="fig-row">${hasSaved()?`<button type="button" data-fig="mine" aria-pressed="${!isExample}">My chart</button>`:''}${FIGURES.map(f=>`<button type="button" data-fig="${f.key}" aria-pressed="${isExample&&f===fig}">${esc(f.label)}</button>`).join('')}</div>`;
+    return isExample?'':`<details class="spawn-more"><summary>Spawn as someone else</summary>${row}</details>`})()}
+  <header class="hdr pblock"><div class="eyebrow">${isExample?`${esc(fig.who)} · <button type="button" class="backlink" id="back">← choose someone else</button>`:`Your current map · ${monthName} ${c.cy}`}</div><h2>${first==='You'?'Your':esc(first)+'\'s'} blueprint</h2>
+    <p class="lead">Astrology, Human Design, numerology, the Chinese zodiac and the Enneagram, laid over each other. Tap any point on the chart to read it, or pick a theme to see where the systems agree.</p>
+    <button type="button" class="playbtn" id="play"><span class="tri" aria-hidden="true"></span>Play the reading</button></header>
+  <div class="sm-night pblock${fresh?' fresh':''}" id="blueprint">
+    <canvas class="sm-stars" aria-hidden="true"></canvas>
+    <div class="sm-grid">
+      <div class="sm-wheel">${wheelSVG(P,themes,first)}</div>
+      <div class="sm-side">
+        <article class="sm-card" aria-live="polite"><p class="sm-sys"></p><h3 class="sm-val"></h3><p class="sm-title"></p><p class="sm-text"></p></article>
+        <div class="sm-themes"><p class="sm-sys">${themes.length?'Where the systems agree':'Add more placements to see where the systems agree'}</p>
+          ${themes.slice(0,4).map(t=>`<button type="button" class="sm-theme" data-theme="${t.k}" aria-pressed="false"><span class="cnt">${t.count}</span><span><b>${TAGS[t.k][0]}</b><span class="tx">${TAGS[t.k][1]}</span></span></button>`).join('')}
+        </div>
+      </div>
+    </div>
+    <p class="sm-thesis">${thesis}</p>
+  </div>
+  <div class="sm-trio pblock">
+    <div class="sm-panel"><p class="sm-k">Numerology</p><div class="sm-nums">${nums.map(([n,l,t])=>`<div><b>${n}</b><span>${l}</span><small>${cap(t)}</small></div>`).join('')}</div>
+      ${c.nn?'':'<p class="sm-small" style="margin-top:.8rem">Add your full birth name for Expression and Soul Urge.</p>'}</div>
+    <div class="sm-panel sm-bg"><p class="sm-k">Human Design bodygraph</p>${bgPanel}</div>
+    <div class="sm-panel"><p class="sm-k">Element balance</p>
+      <div class="sm-els">${['Fire','Earth','Air','Water'].map(e=>`<div class="el el-${e.toLowerCase()}${c.els[e]?'':' zero'}"><span class="orb" style="--f:${c.els[e]/elMax}"></span><span>${e}</span></div>`).join('')}</div>
+      <p class="sm-small">${elText}</p></div>
+  </div>
+  ${bg&&bgOpen?`<section class="bg-explore pblock" id="bg-explore"><div class="bgx-head"><h3>Your bodygraph, up close</h3>
+      <div class="bgx-legend"><span><i style="background:#2a2a24;border-color:#2a2a24"></i>conscious</span><span><i style="background:#c0473a;border-color:#c0473a"></i>unconscious</span><span><i style="background:#d9a94e;border-color:#b98a30"></i>both</span><span><i style="border:0;width:auto;height:auto;font:600 11px var(--mono)">12</i>number only = inactive gate</span></div></div>
+      <div class="bgx-svg">${explorerSVG(bg)}</div><div class="bgx-card"></div></section>`:''}
+  <div class="sm-tabs">
+    <div class="sm-tablist" role="tablist" aria-label="Life areas">${tabs.map(([h],i)=>`<button type="button" role="tab" id="smt-${i}" aria-controls="smp-${i}" aria-selected="${i===selTab}" tabindex="${i===selTab?0:-1}">${h}</button>`).join('')}</div>
+    ${tabs.map(([h,b,src],i)=>`<div class="sm-tabpanel pblock" role="tabpanel" id="smp-${i}" aria-labelledby="smt-${i}"${i===selTab?'':' hidden'}><h3 class="ptitle">${h}</h3><div class="src">${src}</div>${b}</div>`).join('')}
+  </div>
+  <div class="sm-season pblock">
+    <div><span class="sm-k">Personal year ${c.cy}</span><b>${c.py}</b><span class="t">${Y[0]}</span></div>
+    <div><span class="sm-k">${monthName}</span><b>${c.pm}</b><span class="t">${M[0]}</span></div>
+    <div><span class="sm-k">Chinese year ${c.cy}</span><b class="word">${c.nowEl} ${c.nowAnimal}</b><span class="t">${c.nowAnimal===c.animal[0]?'Your own sign returns':'Collective backdrop'}</span></div>
+    <p class="py-d">${Y[1]} This month adds a note of <b style="font:inherit;color:inherit;font-weight:600">${M[0].toLowerCase()}</b>: ${M[1].charAt(0).toLowerCase()+M[1].slice(1)}<small>Lean into: ${Y[2]} Avoid: ${Y[3]}</small></p>
+  </div>
+  <section class="sm-readings pblock"><p class="sm-k">Every placement</p><div class="rd-grid">${P.map(p=>`<article><p class="rs">${esc(p.system)} · ${esc(p.role)}</p><h3>${esc(p.value)}</h3><p class="rt">${esc(p.title)}</p><p>${esc(p.text)}</p></article>`).join('')}</div></section>
+  <p class="foot pblock">These systems are lenses for reflection, not facts about you. Keep what resonates, drop what doesn't, and check it against how your life actually feels. Numerology uses the Pythagorean method on your full birth name. The personal year runs on the calendar year.</p>
+  <div class="pdfbar"><button type="button" class="pdfbtn" id="pdf">Save as PDF</button><p class="hint">Saves the whole map, every reading and all ten life areas as a printable PDF.</p></div>`;
+  bindMap(P,tabs.length);
+  fitCore(out);
+  if($('bg-toggle'))$('bg-toggle').addEventListener('click',()=>{bgOpen=!bgOpen;render();if(bgOpen)$('bg-explore')?.scrollIntoView({behavior:'smooth',block:'start'})});
+  if(bg&&bgOpen)bindExplorer(bg);
+  $('pdf').addEventListener('click',()=>exportPdf($('pdf')));
+  if($('back'))$('back').addEventListener('click',backToSpawn);
+  if($('play'))$('play').addEventListener('click',()=>TOUR.start());
+  out.querySelectorAll('[data-fig]').forEach(b=>b.addEventListener('click',()=>showFigure(b.dataset.fig)));
+}
+
+function bindMap(P,nTabs){
+  const root=$('blueprint'),byId=Object.fromEntries(P.map(p=>[p.id,p]));
+  const nodes=[...root.querySelectorAll('.node')],orbits=[...root.querySelectorAll('.orbit')],themes=[...root.querySelectorAll('.sm-theme')],card=root.querySelector('.sm-card');
+  const light=keys=>orbits.forEach(o=>{o.classList.remove('on');if(keys.includes(o.dataset.theme)){void o.getBBox();o.classList.add('on')}});
+  const set=(s,v)=>card.querySelector(s).textContent=v;
+  function selectNode(id,anim){const p=byId[id];selId=id;selTheme=null;
+    nodes.forEach(n=>{n.classList.toggle('on',n.dataset.id===id);n.classList.remove('lit')});
+    themes.forEach(t=>t.setAttribute('aria-pressed','false'));light(p.themes);
+    if(anim){card.classList.remove('swap');void card.offsetWidth;card.classList.add('swap')}
+    set('.sm-sys',`${p.system} · ${p.role}`);set('.sm-val',p.value);set('.sm-title',p.title);set('.sm-text',p.text)}
+  function selectTheme(k){const was=selTheme===k;selTheme=was?null:k;
+    themes.forEach(t=>t.setAttribute('aria-pressed',String(t.dataset.theme===selTheme)));
+    nodes.forEach(n=>{n.classList.remove('on');n.classList.toggle('lit',!!selTheme&&n.dataset.themes.split(' ').includes(k))});
+    light(selTheme?[k]:[])}
+  nodes.forEach(n=>{n.addEventListener('click',()=>selectNode(n.dataset.id,true));
+    n.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();selectNode(n.dataset.id,true)}})});
+  themes.forEach(t=>t.addEventListener('click',()=>selectTheme(t.dataset.theme)));
+  const keepTheme=selTheme;selectNode(selId,false);if(keepTheme)selectTheme(keepTheme);
+  const tabs=[...document.querySelectorAll('.sm-tablist [role="tab"]')];
+  const pick=(i,focus)=>{selTab=i;tabs.forEach((x,j)=>{const on=j===i;x.setAttribute('aria-selected',String(on));x.tabIndex=on?0:-1;$('smp-'+j).hidden=!on});if(focus)tabs[i].focus()};
+  tabs.forEach((t,i)=>{t.addEventListener('click',()=>pick(i,true));
+    t.addEventListener('keydown',e=>{if(e.key==='ArrowRight')pick((i+1)%nTabs,true);if(e.key==='ArrowLeft')pick((i-1+nTabs)%nTabs,true)})});
+  stars.attach(root.querySelector('.sm-stars'));
+}
+
+// Twinkling starfield behind the wheel. One animation loop, re-attached to the canvas after each render.
+const stars=(()=>{let cv=null,ctx,list=[],w=0,h=0,visible=true,looping=false;const still=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const go=()=>{if(!looping&&!still&&visible&&cv){looping=true;requestAnimationFrame(draw)}};
+  const io=new IntersectionObserver(([e])=>{visible=e.isIntersecting;go()});
+  function size(){if(!cv)return;const r=cv.getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,2);
+    if(!(Math.abs(r.width-w)<1&&Math.abs(r.height-h)<1&&list.length)){w=r.width;h=r.height;
+      list=Array.from({length:Math.round(w*h/2600)},()=>({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.2+.2,p:Math.random()*6.28,s:.4+Math.random()*1.2}))}
+    cv.width=w*dpr;cv.height=h*dpr;ctx.setTransform(dpr,0,0,dpr,0,0)}
+  function draw(t){looping=false;if(!cv)return;ctx.clearRect(0,0,w,h);
+    for(const s of list){ctx.globalAlpha=still?.55:.3+.5*(.5+.5*Math.sin(s.p+t*.001*s.s));ctx.fillStyle='#f1e9d6';ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,6.283);ctx.fill()}
+    go()}
+  addEventListener('resize',()=>{size();if(still)draw(0)});
+  return {attach(c){if(cv)io.unobserve(cv);cv=c;ctx=cv.getContext('2d');io.observe(cv);size();if(still)draw(0);else go()}};
+})();
+
+// City picker: searchable dropdown over CITIES
+const cityIn=$('f-city'),cityList=$('city-list');let cityMatches=[],cityActive=-1;
+function cityStatus(){const v=read(),el=$('cityok'),hit=CITIES.find(x=>x.n.toLowerCase()===v.city.toLowerCase());
+  el.classList.toggle('miss',!!v.city&&!hit&&!v.lat);
+  el.textContent=v.city&&!hit&&!v.lat?'Not in the list. Pick a suggestion, or enter coordinates below.'
+    :v.lat&&v.lon?`Using ${(+v.lat).toFixed(2)}, ${(+v.lon).toFixed(2)} · ${v.tz}`:''}
+function showCities(){const t=cityIn.value.trim().toLowerCase();
+  cityMatches=(t?CITIES.filter(c=>c.n.toLowerCase().includes(t)).sort((a,b)=>(b.n.toLowerCase().startsWith(t))-(a.n.toLowerCase().startsWith(t))):CITIES).slice(0,60);
+  cityActive=cityMatches.length?0:-1;drawCities();cityList.hidden=false;cityIn.setAttribute('aria-expanded','true')}
+function drawCities(){cityList.innerHTML=cityMatches.length?cityMatches.map((c,i)=>{const [city,...rest]=c.n.split(', ');
+    return `<li role="option" id="city-${i}" data-i="${i}" aria-selected="${i===cityActive}">${esc(city)}<small>${esc(rest.join(', '))}</small></li>`}).join('')
+    :'<li class="none">No match. Open "Coordinates and time zone" to enter it by hand.</li>';
+  if(cityActive>=0){cityIn.setAttribute('aria-activedescendant','city-'+cityActive);$('city-'+cityActive).scrollIntoView({block:'nearest'})}}
+function hideCities(){cityList.hidden=true;cityIn.setAttribute('aria-expanded','false')}
+function pickCity(c){cityIn.value=c.n;setF('lat',c.lat);setF('lon',c.lon);setF('tz',c.tz);hideCities();isExample=false;calcChart(true);save(read());cityStatus();render()}
+cityIn.addEventListener('focus',showCities);
+cityIn.addEventListener('click',showCities);
+cityIn.addEventListener('blur',()=>setTimeout(hideCities,120));
+cityIn.addEventListener('keydown',e=>{
+  if(cityList.hidden&&(e.key==='ArrowDown'||e.key==='ArrowUp')){showCities();e.preventDefault();return}
+  if(e.key==='ArrowDown'){cityActive=Math.min(cityActive+1,cityMatches.length-1);drawCities();e.preventDefault()}
+  else if(e.key==='ArrowUp'){cityActive=Math.max(cityActive-1,0);drawCities();e.preventDefault()}
+  else if(e.key==='Enter'&&!cityList.hidden&&cityActive>=0){pickCity(cityMatches[cityActive]);e.preventDefault()}
+  else if(e.key==='Escape')hideCities()});
+cityList.addEventListener('mousedown',e=>{e.preventDefault();const li=e.target.closest('li[data-i]');if(li)pickCity(cityMatches[+li.dataset.i])});
+
+// Carousel: drifts on its own, pauses on hover/touch/focus, arrows jump two cards, loops seamlessly over a duplicated set.
+function startMarquee(){const m=out.querySelector('.marquee');if(!m)return;
+  const still=matchMedia('(prefers-reduced-motion: reduce)').matches,half=()=>m.scrollWidth/2;
+  let paused=false,hold=false,last=0,acc=0,hT;
+  const wrap=()=>{const h=half();if(m.scrollLeft>=h)m.scrollLeft-=h;else if(m.scrollLeft<=0)m.scrollLeft+=h};
+  ['mouseenter','focusin','touchstart'].forEach(e=>m.addEventListener(e,()=>paused=true,{passive:true}));
+  ['mouseleave','focusout'].forEach(e=>m.addEventListener(e,()=>paused=false));
+  m.addEventListener('touchend',()=>setTimeout(()=>paused=false,2500),{passive:true});
+  m.addEventListener('scroll',()=>{if(!hold)wrap()},{passive:true});
+  const step=t=>{if(!m.isConnected)return;if(last&&!paused&&!hold&&!still){acc+=(t-last)*.021;const px=Math.floor(acc);if(px){m.scrollLeft+=px;acc-=px}}last=t;requestAnimationFrame(step)};
+  requestAnimationFrame(step);
+  out.querySelectorAll('.mq-arrow').forEach(b=>b.addEventListener('click',()=>{
+    const d=b.dataset.dir==='next'?1:-1,jump=Math.min(444,m.clientWidth*.8),h=half();hold=true;
+    if(d>0&&m.scrollLeft+jump>=h)m.scrollLeft-=h;if(d<0&&m.scrollLeft-jump<=0)m.scrollLeft+=h;
+    m.scrollBy({left:d*jump,behavior:still?'auto':'smooth'});clearTimeout(hT);hT=setTimeout(()=>{hold=false;wrap()},1500)}))}
+function backToSpawn(){if(TOUR.active)TOUR.exit();F.forEach(k=>setF(k,''));setF('tz',LOCALTZ);$('f-time').disabled=false;isExample=false;selId=null;selTheme=null;calcChart(false);render();cityStatus();scrollTo({top:0,behavior:'smooth'})}
+// Guided reading: lights up one section at a time and reads it aloud in the Spell Cast voice
+// (Google UK English Female in Chrome, rate .9). Next unlocks when the reading finishes.
+const TOUR=(()=>{
+  const canSpeak='speechSynthesis' in window;let voice=null;
+  const FEM=/female|serena|kate|stephanie|martha|sonia|libby|hazel|susan|fiona|shelley|flo\b|sandy|amy|emma|mia\b|maisie|bella|moira|karen|tessa|catherine|samantha|victoria|allison|ava\b|zoe/i,
+        MALE=/\bmale\b|daniel|arthur|oliver|george|ryan|thomas|reed|rocko|eddy|grandpa|ralph|fred|albert|junior|rishi|aaron|alex\b|tom\b|lee\b/i;
+  const eng=()=>speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang));
+  // Narration only with Chrome's Google UK English Female. Other browsers get the silent, timed caption instead.
+  function pickVoice(){if(!canSpeak)return;voice=eng().find(v=>v.name==='Google UK English Female')||eng().find(v=>/google uk english female/i.test(v.name))||null;
+    const m=bar&&bar.querySelector('.tb-mute');if(m)m.hidden=!voice}
+  let steps=[],i=0,active=false,muted=false,token=0,timer=null,bar=null,savedBg=false,dived=false;
+  if(canSpeak){pickVoice();speechSynthesis.onvoiceschanged=pickVoice}
+  const q=sel=>document.querySelector(sel),fire=el=>el&&el.dispatchEvent(new MouseEvent('click',{bubbles:true}));
+  const txt=el=>el?el.innerText:'';
+  // text of an element with line breaks between blocks (innerText is empty of breaks on detached copies)
+  const blockText=(el,skip)=>{if(!el)return '';const c=el.cloneNode(true);if(skip)c.querySelectorAll(skip).forEach(x=>x.remove());
+    c.querySelectorAll('p,li,h3,h4,div,span.tag,small').forEach(e=>e.append('\n'));return c.textContent};
+  const clean=t=>t.replace(/[←▾▴›‹]/g,'').split('\n').map(x=>x.trim()).filter(Boolean).map(x=>/[.!?:]$/.test(x)?x:x+'.').join(' ').replace(/\s+/g,' ').replace(/\s·\s/g,', ').replace(/\s=\s/g,' means ').replace(/\s\|\s/g,' and ').replace(/(\d)–(\d)/g,'$1-$2').trim();
+  const lc=t=>t?t.charAt(0).toLowerCase()+t.slice(1):'',and=xs=>xs.length<2?xs.join(''):xs.slice(0,-1).join(', ')+' and '+xs.at(-1);
+  const strip=t=>String(t).replace(/<[^>]+>/g,'').replace(/\.$/,'');
+  const NEXTWORD=['First','Then','And','Also','Finally'];
+  // Each step = one natural lead-in sentence + the section's own text, read as written.
+  function story(id){const R=RD,c=R.c,pl=R.P.find(x=>x.id===id),T=pl?pl.text:'',V=pl?(pl.short||pl.value):'';
+    switch(id){
+      case 'welcome':return `${isExample?`Let's peer into the spawnpoint of ${fig.label}.`:`Welcome to your map${R.first&&R.first!=='You'?', '+R.first:''}.`} Here, astrology, numerology, Human Design, the Chinese zodiac and the Enneagram are laid over each other. In one line: ${lc(R.thesis)} Let's go through it piece by piece.`;
+      case 'sun':return `Let's start with the Sun, the heart of the chart. Yours is in ${V}. ${T}`;
+      case 'moon':return `Next is the Moon, which shows what you need. Yours is in ${V}. ${T}`;
+      case 'rising':return `Then there's the Rising sign, the first impression you make. Yours is ${V}. ${T}`;
+      case 'lp':return `Now for the numbers. Your Life Path is ${V}, a path of ${lc(pl.title)}. ${T}`;
+      case 'expr':return `Your Expression number comes from your name, and it's ${V}. ${T}`;
+      case 'soul':return `Your Soul Urge, what you want most, is ${V}. ${T}`;
+      case 'type':return `In Human Design, you're a ${pl.value}. ${T}`;
+      case 'profile':return `Your Human Design profile is ${V}, the ${pl.title}. ${T}`;
+      case 'auth':return `Your decision-making authority is ${pl.value.replace(' (Outer)','')}. ${T.replace(/Try this:/,'Try this.')}`;
+      case 'chinese':return `In the Chinese zodiac, you're a ${pl.value}. ${T}`;
+      case 'enn':return `And your Enneagram type is ${pl.value}. ${T}`;
+      case 'nums':return `Here are your numbers side by side. `+[...document.querySelectorAll('.sm-nums>div')].map(d=>`${d.querySelector('span').textContent} ${d.querySelector('b').textContent}: ${d.querySelector('small').textContent}.`).join(' ');
+      case 'hd':{const bg=R.bg;if(!bg)return 'Next is the Human Design bodygraph. Add a birth date to draw it.';const t=clean(blockText(q('.sm-bg'),'button,svg,.sm-k,.bg-read,.sm-strong').replace(/ · cross gates[^\n]*/,''));
+        return `Next is your Human Design bodygraph. ${bg.channels.length?`Your defined channel${bg.channels.length>1?'s are':' is'} ${and(bg.channels.map(chKey))}. `:''}${t} You can dive deeper into the full diagram, or keep going.`}
+      case 'elements':return `Now, your element balance. ${R.elText}`;
+      case 'season':return `Finally, your timing. ${c.cy} is your Personal Year ${c.py}: ${R.Y[0].toLowerCase()}. ${clean(txt(q('.py-d')))}`;
+      case 'end':return `${q('.foot').textContent} That's the whole map. Tap exit to see everything on one page.`}
+    return ''}
+  const TAB_INTRO={'Who I am':'Here are your "I am" statements, to read out loud.','Career':'Let\'s look at career.','Wealth':'Next, wealth.','Expression':'Next, expression: where you shine.','Places':'Now, the places where you thrive.','Health':'Next, health.','Partners':'Now, partners.','Love':'Next, love.','Watch for':'Every chart has shadows. Here\'s what to watch for.','Practices':'And finally, a few practices for right now.'};
+  function tabStory(name,j){const el=$('smp-'+j),chips=[...el.querySelectorAll('.sm-chips li')].map(x=>x.textContent),
+      items=[...el.querySelectorAll('.sm-list li')].map(li=>{const sp=li.querySelector('span');return sp?`${sp.textContent.replace(' · ',', ')}: ${li.textContent.slice(sp.textContent.length)}`:li.textContent}).map(t=>/[.!?]$/.test(t)?t:t+'.');
+    return `${TAB_INTRO[name]||name+'.'} ${chips.length?`Careers that fit: ${and(chips)}. `:''}${items.length?items.join(' '):''}${clean(blockText(el,'.src,.ptitle,.sm-chips,.sm-list'))}`.replace(/\s+/g,' ').trim()}
+  function mainSteps(){const S=[];
+    S.push({t:'Welcome',el:'.hdr',say:()=>story('welcome')});
+    document.querySelectorAll('#blueprint .node').forEach(n=>{const id=n.dataset.id;
+      S.push({t:n.getAttribute('aria-label').split(':')[0],el:'#blueprint',focus:'#blueprint .sm-card',align:'bottom',act:()=>fire(q(`#blueprint .node[data-id="${id}"]`)),
+        say:()=>story(id)})});
+    document.querySelectorAll('#blueprint .sm-theme').forEach(b=>{const k=b.dataset.theme;
+      S.push({t:'Where the systems agree',el:'#blueprint',focus:'.sm-themes',align:'bottom',act:()=>{const x=q(`.sm-theme[data-theme="${k}"]`);if(x&&x.getAttribute('aria-pressed')!=='true')fire(x)},
+        say:()=>{const x=q(`.sm-theme[data-theme="${k}"]`),idx=[...document.querySelectorAll('#blueprint .sm-theme')].indexOf(x);return `${['Here\'s where it gets interesting.','Another thread runs through the map.','And one more.','One last thread.'][Math.min(idx,3)]} ${x.querySelector('.cnt').textContent} different parts of your chart all point toward ${x.querySelector('b').textContent.toLowerCase()}. ${x.querySelector('.tx').textContent}`}})});
+    S.push({t:'Numerology',el:'.sm-trio',focus:'.sm-trio>.sm-panel:first-child',say:()=>story('nums')});
+    S.push({t:'Human Design',el:'.sm-trio',focus:'.sm-bg',dive:true,say:()=>story('hd')});
+    S.push({t:'Element balance',el:'.sm-trio',focus:'.sm-trio>.sm-panel:last-child',say:()=>story('elements')});
+    document.querySelectorAll('.sm-tablist [role="tab"]').forEach((tb,j)=>S.push({t:tb.textContent,el:'.sm-tabs',act:()=>fire($('smt-'+j)),
+      say:()=>tabStory(tb.textContent,j)}));
+    S.push({t:'This season',el:'.sm-season',say:()=>story('season')});
+    S.push({t:'The end',el:'.foot',say:()=>story('end'),last:true});
+    return S}
+  function diveSteps(){const S=[],card=()=>{const c=q('.bgx-card').cloneNode(true);c.querySelectorAll('[data-go=""]').forEach(x=>x.closest('p')?.remove());return clean(blockText(c))};
+    S.push({t:'Bodygraph up close',el:'#bg-explore',act:()=>{const b=q('.bgx-card [data-go=""]');if(b)fire(b)},say:()=>`Let's open up the full diagram. Each shape is a center. The colored ones are fixed in you, the white ones are open. The lines are channels, and the little numbered dots are the sixty-four gates. Black dots come from where the planets were when you were born, red ones from about eighty-eight days before. We'll travel top to bottom, one center at a time.`});
+    const ORDER=['Head','Ajna','Throat','G','Heart','Sacral','Spleen','Solar Plexus','Root'],INTRO=['We begin at the crown, with the Head.','Just below it sits the Ajna, the thinking mind.','Then the Throat, where things get said and done.','In the middle is the G center, your sense of self and direction.','Off to the side is the Heart, sometimes called the Ego.','Below that, the Sacral, the engine room.','On the left, the Spleen.','On the right, the Solar Plexus.','And at the base, the Root.'];
+    ORDER.forEach((c,n)=>S.push({t:c+' center',el:'#bg-explore',act:()=>fire(q(`.bgx [data-center="${c}"]`)),say:()=>{const I=CENTER_INFO[c],on=RD.bg.defined.includes(c);
+      return `${INTRO[n]} It runs ${I[1]}, and yours is ${on?'defined':'open'}. ${on?I[2]:I[3]}`}}));
+    [...new Set([...document.querySelectorAll('.bgx .ch.def')].map(x=>x.dataset.ch))].forEach((k,n)=>S.push({t:'Channel '+k,el:'#bg-explore',act:()=>fire(q(`.bgx .hit[data-ch="${k}"]`)),say:()=>{const [a,b]=k.split('-').map(Number),I=CH_INFO[k];
+      return `${n?'Another line of wiring':'Now for the wiring'}: the channel of ${I[0]}, linking your ${HD.G2C[a]} and ${HD.G2C[b]}. ${I[1]} Both ends are lit, so this is a steady, lifelong part of you.`}}));
+    S.push({t:'Back to the reading',el:'#bg-explore',act:()=>{const b=q('.bgx-card [data-go=""]');if(b)fire(b)},say:()=>'That is the whole body map. Now, back to the rest of the story.'});
+    return S}
+  function mark(s){document.querySelectorAll('.tour-on,.tour-focus').forEach(e=>e.classList.remove('tour-on','tour-focus'));
+    const el=q(s.el);if(el)el.classList.add('tour-on');const f=s.focus&&q(s.focus);if(f)f.classList.add('tour-focus');
+    const tgt=f||el;if(tgt){const r=tgt.getBoundingClientRect(),room=innerHeight-(bar?bar.offsetHeight+30:260);
+      const top=s.align==='bottom'&&r.height<room?r.bottom-room+12:r.top-(r.height<room?(room-r.height)/2:16);scrollTo({top:scrollY+top,behavior:'smooth'})}}
+  function caption(text){if(!bar)return;const cap=bar.querySelector('.tb-cap');let html='',re=/\S+/g,m;while((m=re.exec(text)))html+=`<span data-c="${m.index}">${esc(m[0])}</span> `;cap.innerHTML=html;cap.scrollTop=0}
+  function said(ci){if(!bar)return;bar.querySelectorAll('.tb-cap span:not(.said)').forEach(sp=>{if(+sp.dataset.c<=ci){sp.classList.add('said');const cap=sp.parentNode;if(sp.offsetTop-cap.offsetTop>cap.scrollTop+cap.clientHeight-24)cap.scrollTop=sp.offsetTop-cap.offsetTop-24}})}
+  function stopVoice(){token++;clearTimeout(timer);if(canSpeak)speechSynthesis.cancel()}
+  function read(text,done){const my=++token;clearTimeout(timer);
+    if(muted||!canSpeak||!voice){const words=text.match(/\S+/g)||[],per=330;let k=0,idx=[...text.matchAll(/\S+/g)].map(m=>m.index);
+      const tick=()=>{if(my!==token)return;if(k>=idx.length){timer=setTimeout(()=>{if(my===token)done()},900);return}said(idx[k++]);timer=setTimeout(tick,per)};tick();return}
+    speechSynthesis.cancel();if(!voice)pickVoice();
+    const parts=text.match(/[^.!?]+[.!?]+["')\]]*\s*|[^.!?]+$/g)||[text];let off=0,k=0;
+    let cps=window.__spawnCps||.0135; // characters per ms (~13.5/s at rate .9)
+    const next=()=>{if(my!==token)return;if(k>=parts.length){said(1e9);done();return}
+      const part=parts[k++],base=off,lead=part.length-part.trimStart().length;off+=part.length;
+      const u=new SpeechSynthesisUtterance(part.trim());if(voice){u.voice=voice;u.lang=voice.lang}else u.lang='en-GB';u.rate=.9;u.pitch=1;
+      // Google voices rarely send word boundaries, so pace the highlight from when speech actually starts,
+      // at a speaking speed learned from earlier sentences; real boundary events take over when they arrive.
+      const spoken=part.trim(),len=spoken.length;let fin=false,t0=0,raf=0,real=false;
+      const pace=()=>{if(fin||my!==token||real)return;said(base+lead+Math.min(len-1,(performance.now()-t0)*cps));raf=requestAnimationFrame(pace)};
+      const end=()=>{if(fin||my!==token)return;fin=true;cancelAnimationFrame(raf);clearTimeout(timer);
+        if(t0&&!real){const d=performance.now()-t0;if(d>400&&len>12){cps=cps*.6+(len/d)*.4;window.__spawnCps=cps}}said(base+part.length);next()};
+      u.onstart=()=>{if(my!==token)return;t0=performance.now();pace()};
+      u.onend=end;u.onerror=end;u.onboundary=e=>{if(my===token&&(!e.name||e.name==='word')&&e.charIndex>0){real=true;said(base+lead+e.charIndex)}};
+      timer=setTimeout(end,(spoken.match(/\S+/g)||[]).length*700+4000);speechSynthesis.speak(u)};
+    setTimeout(next,80)}
+  function ready(on){if(!bar)return;const n=bar.querySelector('.tb-next');n.disabled=!on;n.textContent=on?(steps[i].last?'Finish':'Next →'):'Listening…';
+    bar.querySelector('.tb-skip').hidden=on;const d=bar.querySelector('.tb-dive');d.hidden=!(steps[i].dive&&!dived);if(on)n.focus({preventScroll:true})}
+  function run(){const s=steps[i];stopVoice();if(s.act)s.act();
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{if(!active)return;mark(s);
+      bar.querySelector('.tb-step').innerHTML=`<b>${i+1}</b> / ${steps.length} · ${esc(s.t)}`;bar.querySelector('.tb-prog i').style.width=((i+1)/steps.length*100)+'%';
+      const text=s.say();caption(text);ready(false);read(text,()=>ready(true))}))}
+  function next(){if(!active)return;if(steps[i].last)return exit();i++;run()}
+  function dive(){if(!q('#bg-explore'))fire($('bg-toggle'));dived=true;steps.splice(i+1,0,...diveSteps());i++;run()}
+  function key(e){if(!active)return;if(e.key==='Escape'){e.preventDefault();exit()}
+    else if((e.key==='ArrowRight'||e.key==='Enter')&&!bar.querySelector('.tb-next').disabled&&!/INPUT|SELECT|TEXTAREA/.test(e.target.tagName)){e.preventDefault();next()}}
+  function start(){if(active)return;active=true;savedBg=bgOpen;dived=false;pickVoice();
+    if(bgOpen){bgOpen=false;render()}
+    steps=mainSteps();i=0;document.body.classList.add('touring');
+    bar=document.createElement('div');bar.className='tour-bar';bar.setAttribute('role','region');bar.setAttribute('aria-label','Guided reading');
+    bar.innerHTML=`<div class="tb-top"><span class="tb-step"></span><span><button type="button" class="tb-ghost tb-mute">${muted?'Sound off':'Sound on'}</button> <button type="button" class="tb-exit">✕ Exit</button></span></div>
+      <div class="tb-prog"><i></i></div><p class="tb-cap" aria-live="polite"></p>
+      <div class="tb-row"><button type="button" class="tb-skip">skip</button><button type="button" class="tb-dive" hidden>Dive deeper</button><button type="button" class="tb-next" disabled>Listening…</button></div>`;
+    document.body.appendChild(bar);
+    bar.querySelector('.tb-exit').onclick=exit;bar.querySelector('.tb-next').onclick=next;bar.querySelector('.tb-dive').onclick=dive;
+    bar.querySelector('.tb-skip').onclick=()=>{stopVoice();said(1e9);ready(true)};
+    bar.querySelector('.tb-mute').onclick=e=>{muted=!muted;e.target.textContent=muted?'Sound off':'Sound on';if(muted){stopVoice();said(1e9);ready(true)}};
+    bar.querySelector('.tb-mute').hidden=!voice;
+    addEventListener('keydown',key);run()}
+  function exit(){if(!active)return;active=false;stopVoice();removeEventListener('keydown',key);
+    document.body.classList.remove('touring');document.querySelectorAll('.tour-on,.tour-focus').forEach(e=>e.classList.remove('tour-on','tour-focus'));
+    if(bar){bar.remove();bar=null}bgOpen=savedBg;render();scrollTo({top:0,behavior:'smooth'})}
+  return {start,exit,get active(){return active}}})();
+function hasSaved(){try{const d=JSON.parse(localStorage.getItem(KEY));return !!(d&&d.v&&d.v.date)}catch(e){return false}}
+function showMine(){load();$('f-time').disabled=$('f-unk').checked;isExample=false;selId=null;selTheme=null;calcChart(false);render();cityStatus()}
+function showFigure(key){if(key==='mine')return showMine();fig=FIGURES.find(f=>f.key===key)||FIGURES[0];const s=figValues(fig);F.forEach(k=>setF(k,s[k]));
+  $('f-time').disabled=!!s.unk;isExample=true;selId=null;selTheme=null;calcChart(!fig.derived);render();cityStatus();
+  if(fig.derived){$('calcnote').textContent='The creator\'s birth date, time and place stay private, so this map is built from saved placements only.';$('calcnote').classList.remove('warn')}}
+
+// PDF: each .pblock is captured and laid onto A4 pages. Uses the downloads capability; falls back to the print dialog.
+const loadScript=src=>new Promise((ok,no)=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=no;document.head.appendChild(s)});
+let pdfLibs=null,dlP=null;
+const getDownloads=()=>dlP||(dlP=window.claude&&claude.use?Promise.race([claude.use('downloads'),new Promise(r=>setTimeout(()=>r(null),4000))]).catch(()=>null):Promise.resolve(null));
+function inlineSvgStyles(root){root.querySelectorAll('svg, svg *').forEach(el=>{const cs=getComputedStyle(el);
+  ['fill','stroke','stroke-width','stroke-dasharray','stroke-dashoffset','stroke-linecap','opacity','font-family','font-size','font-weight','letter-spacing'].forEach(p=>el.style.setProperty(p,cs.getPropertyValue(p)));
+  el.style.animation='none';el.style.transition='none'})}
+async function exportPdf(btn){
+  if(btn.disabled)return;const label=btn.textContent;btn.disabled=true;btn.textContent='Preparing PDF…';
+  const html=document.documentElement,prevTheme=html.dataset.theme;let ok=false;
+  try{
+    const dl=await getDownloads();
+    pdfLibs=pdfLibs||Promise.all([loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'),loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js')]);
+    try{await pdfLibs}catch(e){pdfLibs=null;const po=bgOpen,ps=bgSel;bgOpen=true;bgSel=null;render();window.print();bgOpen=po;bgSel=ps;ok=true;return}
+    html.dataset.theme='light';document.body.classList.add('exporting');
+    var keepOpen=bgOpen,keepSel=bgSel;bgOpen=true;bgSel=null;render();
+    await document.fonts.ready;await new Promise(r=>setTimeout(r,1000));
+    inlineSvgStyles($('out'));
+    const pdf=new window.jspdf.jsPDF({unit:'mm',format:'a4'}),W=210,H=297,M=12,CW=W-2*M;let y=M;
+    const paint=()=>{pdf.setFillColor(245,240,230);pdf.rect(0,0,W,H,'F')};paint();
+    for(const el of $('out').querySelectorAll('.pblock')){
+      const cv=await html2canvas(el,{scale:2,backgroundColor:'#f5f0e6',logging:false,useCORS:true});
+      let w=CW,h=cv.height*CW/cv.width;if(h>H-2*M){h=H-2*M;w=cv.width*h/cv.height}
+      if(y+h>H-M&&y>M){pdf.addPage();paint();y=M}
+      pdf.addImage(cv.toDataURL('image/jpeg',.92),'JPEG',M+(CW-w)/2,y,w,h);y+=h+5}
+    const who=isExample?fig.label:((read().name||'').split(/\s+/)[0]||'My');
+    const name=`${who} - Spawnpoint.pdf`;
+    if(dl)await dl.save({filename:name,data:pdf.output('blob')});else pdf.save(name); // inside claude.ai the platform saves it; on the open web the browser downloads it
+    ok=true;
+  }catch(e){if(e&&e.code==='declined')ok=true;else console.error(e)}
+  finally{if(typeof keepOpen!=='undefined'){bgOpen=keepOpen;bgSel=keepSel}document.body.classList.remove('exporting');if(prevTheme)html.dataset.theme=prevTheme;else delete html.dataset.theme;
+    render();const b=$('pdf');if(!ok){b.textContent='Couldn\'t make the PDF. Try again';setTimeout(()=>{const x=$('pdf');if(x)x.textContent=label},3000)}}
+}
+
+const saved=load();calcChart(!saved);render();cityStatus();
+document.querySelector('aside').addEventListener('input',e=>{
+  isExample=false;const k=e.target.id.slice(2);
+  if(k==='city'){showCities();const hit=CITIES.find(x=>x.n.toLowerCase()===e.target.value.trim().toLowerCase());if(hit){setF('lat',hit.lat);setF('lon',hit.lon);setF('tz',hit.tz)}else{setF('lat','');setF('lon','')}}
+  if(k==='unk')$('f-time').disabled=e.target.checked;
+  queueMicrotask(cityStatus);
+  if(BIRTH.includes(k)||k==='city')calcChart(true);else calcChart(false);
+  save(read());render()});
+$('f-time').disabled=$('f-unk').checked;
+$('clear').addEventListener('click',()=>{F.forEach(k=>setF(k,''));setF('tz',LOCALTZ);$('f-time').disabled=false;isExample=false;calcChart(true);save(read());render();cityStatus();$('f-name').focus()});
+</script>
+
+</body></html>
