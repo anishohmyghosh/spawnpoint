@@ -364,7 +364,7 @@ body.touring #out>.hdr.tour-on,body.touring #out>.foot.tour-on{border-radius:8px
         <div class="field"><label for="f-lon">Longitude</label><input id="f-lon" inputmode="decimal" placeholder="88.36"></div>
       </div>
       <div class="field"><label for="f-tz">Time zone at birth</label><select id="f-tz"></select></div>
-      <p class="hint">City not listed? Enter its coordinates (east and north are positive) and pick its time zone. Daylight saving is handled for you.</p>
+      <p class="hint">City search by <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>. Place not found? Enter its coordinates (east and north are positive) and pick its time zone. Daylight saving is handled for you.</p>
     </details>
     <div class="auto" id="auto"></div>
   </fieldset>
@@ -477,226 +477,50 @@ Delhi, India|28.6139|77.209|Asia/Kolkata
 Bengaluru, India|12.9716|77.5946|Asia/Kolkata
 Chennai, India|13.0827|80.2707|Asia/Kolkata
 Hyderabad, India|17.385|78.4867|Asia/Kolkata
-Pune, India|18.5204|73.8567|Asia/Kolkata
-Ahmedabad, India|23.0225|72.5714|Asia/Kolkata
-Jaipur, India|26.9124|75.7873|Asia/Kolkata
-Lucknow, India|26.8467|80.9462|Asia/Kolkata
-Patna, India|25.5941|85.1376|Asia/Kolkata
-Bhubaneswar, India|20.2961|85.8245|Asia/Kolkata
-Guwahati, India|26.1445|91.7362|Asia/Kolkata
-Kochi, India|9.9312|76.2673|Asia/Kolkata
-Chandigarh, India|30.7333|76.7794|Asia/Kolkata
-Siliguri, India|26.7271|88.3953|Asia/Kolkata
-Durgapur, India|23.5204|87.3119|Asia/Kolkata
-Asansol, India|23.6739|86.9524|Asia/Kolkata
-Kharagpur, India|22.346|87.232|Asia/Kolkata
-Ranchi, India|23.3441|85.3096|Asia/Kolkata
-Varanasi, India|25.3176|82.9739|Asia/Kolkata
-Nagpur, India|21.1458|79.0882|Asia/Kolkata
-Indore, India|22.7196|75.8577|Asia/Kolkata
-Bhopal, India|23.2599|77.4126|Asia/Kolkata
-Goa, India|15.4909|73.8278|Asia/Kolkata
-Thiruvananthapuram, India|8.5241|76.9366|Asia/Kolkata
 Dhaka, Bangladesh|23.8103|90.4125|Asia/Dhaka
-Chittagong, Bangladesh|22.3569|91.7832|Asia/Dhaka
-Kathmandu, Nepal|27.7172|85.324|Asia/Kathmandu
 Karachi, Pakistan|24.8607|67.0011|Asia/Karachi
 Lahore, Pakistan|31.5204|74.3587|Asia/Karachi
+Kathmandu, Nepal|27.7172|85.324|Asia/Kathmandu
 Colombo, Sri Lanka|6.9271|79.8612|Asia/Colombo
 Dubai, UAE|25.2048|55.2708|Asia/Dubai
 Singapore|1.3521|103.8198|Asia/Singapore
-Kuala Lumpur, Malaysia|3.139|101.6869|Asia/Kuala_Lumpur
+Manila, Philippines|14.5995|120.9842|Asia/Manila
 Bangkok, Thailand|13.7563|100.5018|Asia/Bangkok
 Jakarta, Indonesia|-6.2088|106.8456|Asia/Jakarta
-Manila, Philippines|14.5995|120.9842|Asia/Manila
 Hong Kong|22.3193|114.1694|Asia/Hong_Kong
 Shanghai, China|31.2304|121.4737|Asia/Shanghai
 Beijing, China|39.9042|116.4074|Asia/Shanghai
-Taipei, Taiwan|25.033|121.5654|Asia/Taipei
 Seoul, South Korea|37.5665|126.978|Asia/Seoul
 Tokyo, Japan|35.6762|139.6503|Asia/Tokyo
 Sydney, Australia|-33.8688|151.2093|Australia/Sydney
-Melbourne, Australia|-37.8136|144.9631|Australia/Melbourne
-Auckland, New Zealand|-36.8485|174.7633|Pacific/Auckland
-Tehran, Iran|35.6892|51.389|Asia/Tehran
-Istanbul, Turkey|41.0082|28.9784|Europe/Istanbul
-Tel Aviv, Israel|32.0853|34.7818|Asia/Jerusalem
-Cairo, Egypt|30.0444|31.2357|Africa/Cairo
 Lagos, Nigeria|6.5244|3.3792|Africa/Lagos
 Nairobi, Kenya|-1.2921|36.8219|Africa/Nairobi
 Johannesburg, South Africa|-26.2041|28.0473|Africa/Johannesburg
-Cape Town, South Africa|-33.9249|18.4241|Africa/Johannesburg
+Cairo, Egypt|30.0444|31.2357|Africa/Cairo
+Istanbul, Turkey|41.0082|28.9784|Europe/Istanbul
 London, UK|51.5074|-0.1278|Europe/London
-Manchester, UK|53.4808|-2.2426|Europe/London
-Edinburgh, UK|55.9533|-3.1883|Europe/London
 Dublin, Ireland|53.3498|-6.2603|Europe/Dublin
 Paris, France|48.8566|2.3522|Europe/Paris
 Berlin, Germany|52.52|13.405|Europe/Berlin
-Munich, Germany|48.1351|11.582|Europe/Berlin
-Amsterdam, Netherlands|52.3676|4.9041|Europe/Amsterdam
-Brussels, Belgium|50.8503|4.3517|Europe/Brussels
 Madrid, Spain|40.4168|-3.7038|Europe/Madrid
-Barcelona, Spain|41.3874|2.1686|Europe/Madrid
-Lisbon, Portugal|38.7223|-9.1393|Europe/Lisbon
 Rome, Italy|41.9028|12.4964|Europe/Rome
-Milan, Italy|45.4642|9.19|Europe/Rome
-Zurich, Switzerland|47.3769|8.5417|Europe/Zurich
-Vienna, Austria|48.2082|16.3738|Europe/Vienna
+Amsterdam, Netherlands|52.3676|4.9041|Europe/Amsterdam
 Stockholm, Sweden|59.3293|18.0686|Europe/Stockholm
-Oslo, Norway|59.9139|10.7522|Europe/Oslo
-Copenhagen, Denmark|55.6761|12.5683|Europe/Copenhagen
-Warsaw, Poland|52.2297|21.0122|Europe/Warsaw
-Prague, Czechia|50.0755|14.4378|Europe/Prague
-Athens, Greece|37.9838|23.7275|Europe/Athens
 Moscow, Russia|55.7558|37.6173|Europe/Moscow
 New York, USA|40.7128|-74.006|America/New_York
 Boston, USA|42.3601|-71.0589|America/New_York
-Philadelphia, USA|39.9526|-75.1652|America/New_York
 Washington DC, USA|38.9072|-77.0369|America/New_York
 Atlanta, USA|33.749|-84.388|America/New_York
 Miami, USA|25.7617|-80.1918|America/New_York
-Detroit, USA|42.3314|-83.0458|America/Detroit
-Pittsburgh, USA|40.4406|-79.9959|America/New_York
-Charlotte, USA|35.2271|-80.8431|America/New_York
-Raleigh, USA|35.7796|-78.6382|America/New_York
 Chicago, USA|41.8781|-87.6298|America/Chicago
 Houston, USA|29.7604|-95.3698|America/Chicago
-Dallas, USA|32.7767|-96.797|America/Chicago
-Austin, USA|30.2672|-97.7431|America/Chicago
-Minneapolis, USA|44.9778|-93.265|America/Chicago
-New Orleans, USA|29.9511|-90.0715|America/Chicago
-Nashville, USA|36.1627|-86.7816|America/Chicago
-Denver, USA|39.7392|-104.9903|America/Denver
-Phoenix, USA|33.4484|-112.074|America/Phoenix
-Salt Lake City, USA|40.7608|-111.891|America/Denver
 Los Angeles, USA|34.0522|-118.2437|America/Los_Angeles
 San Francisco, USA|37.7749|-122.4194|America/Los_Angeles
-San Jose, USA|37.3382|-121.8863|America/Los_Angeles
-San Diego, USA|32.7157|-117.1611|America/Los_Angeles
 Seattle, USA|47.6062|-122.3321|America/Los_Angeles
-Portland, USA|45.5152|-122.6784|America/Los_Angeles
-Las Vegas, USA|36.1699|-115.1398|America/Los_Angeles
-Honolulu, USA|21.3069|-157.8583|Pacific/Honolulu
-Anchorage, USA|61.2181|-149.9003|America/Anchorage
 Toronto, Canada|43.6532|-79.3832|America/Toronto
-Montreal, Canada|45.5017|-73.5673|America/Toronto
 Vancouver, Canada|49.2827|-123.1207|America/Vancouver
-Calgary, Canada|51.0447|-114.0719|America/Edmonton
 Mexico City, Mexico|19.4326|-99.1332|America/Mexico_City
-Bogota, Colombia|4.711|-74.0721|America/Bogota
-Lima, Peru|-12.0464|-77.0428|America/Lima
-Santiago, Chile|-33.4489|-70.6693|America/Santiago
-Buenos Aires, Argentina|-34.6037|-58.3816|America/Argentina/Buenos_Aires
-Sao Paulo, Brazil|-23.5505|-46.6333|America/Sao_Paulo
-Rio de Janeiro, Brazil|-22.9068|-43.1729|America/Sao_Paulo
-Howrah, India|22.5958|88.2636|Asia/Kolkata
-Surat, India|21.1702|72.8311|Asia/Kolkata
-Vadodara, India|22.3072|73.1812|Asia/Kolkata
-Kanpur, India|26.4499|80.3319|Asia/Kolkata
-Agra, India|27.1767|78.0081|Asia/Kolkata
-Prayagraj, India|25.4358|81.8463|Asia/Kolkata
-Noida, India|28.5355|77.391|Asia/Kolkata
-Gurugram, India|28.4595|77.0266|Asia/Kolkata
-Dehradun, India|30.3165|78.0322|Asia/Kolkata
-Shimla, India|31.1048|77.1734|Asia/Kolkata
-Amritsar, India|31.634|74.8723|Asia/Kolkata
-Jammu, India|32.7266|74.857|Asia/Kolkata
-Srinagar, India|34.0837|74.7973|Asia/Kolkata
-Raipur, India|21.2514|81.6296|Asia/Kolkata
-Cuttack, India|20.4625|85.8828|Asia/Kolkata
-Jamshedpur, India|22.8046|86.2029|Asia/Kolkata
-Dhanbad, India|23.7957|86.4304|Asia/Kolkata
-Gangtok, India|27.3389|88.6065|Asia/Kolkata
-Darjeeling, India|27.041|88.2663|Asia/Kolkata
-Shillong, India|25.5788|91.8933|Asia/Kolkata
-Agartala, India|23.8315|91.2868|Asia/Kolkata
-Imphal, India|24.817|93.9368|Asia/Kolkata
-Visakhapatnam, India|17.6868|83.2185|Asia/Kolkata
-Vijayawada, India|16.5062|80.648|Asia/Kolkata
-Coimbatore, India|11.0168|76.9558|Asia/Kolkata
-Madurai, India|9.9252|78.1198|Asia/Kolkata
-Mysuru, India|12.2958|76.6394|Asia/Kolkata
-Mangaluru, India|12.9141|74.856|Asia/Kolkata
-Kozhikode, India|11.2588|75.7804|Asia/Kolkata
-Baltimore, USA|39.2904|-76.6122|America/New_York
-Newark, USA|40.7357|-74.1724|America/New_York
-Jersey City, USA|40.7178|-74.0431|America/New_York
-Providence, USA|41.824|-71.4128|America/New_York
-Hartford, USA|41.7658|-72.6734|America/New_York
-Columbus, USA|39.9612|-82.9988|America/New_York
-Cleveland, USA|41.4993|-81.6944|America/New_York
-Cincinnati, USA|39.1031|-84.512|America/New_York
-Ann Arbor, USA|42.2808|-83.743|America/Detroit
-Indianapolis, USA|39.7684|-86.1581|America/Indiana/Indianapolis
-Tampa, USA|27.9506|-82.4572|America/New_York
-Orlando, USA|28.5383|-81.3792|America/New_York
-Jacksonville, USA|30.3322|-81.6557|America/New_York
-St. Louis, USA|38.627|-90.1994|America/Chicago
-Kansas City, USA|39.0997|-94.5786|America/Chicago
-Milwaukee, USA|43.0389|-87.9065|America/Chicago
-Madison, USA|43.0731|-89.4012|America/Chicago
-San Antonio, USA|29.4241|-98.4936|America/Chicago
-Albuquerque, USA|35.0844|-106.6504|America/Denver
-Sacramento, USA|38.5816|-121.4944|America/Los_Angeles
-Oakland, USA|37.8044|-122.2712|America/Los_Angeles
-Ottawa, Canada|45.4215|-75.6972|America/Toronto
-Winnipeg, Canada|49.8951|-97.1384|America/Winnipeg
-Edmonton, Canada|53.5461|-113.4938|America/Edmonton
-Brisbane, Australia|-27.4698|153.0251|Australia/Brisbane
-Perth, Australia|-31.9505|115.8605|Australia/Perth
-Adelaide, Australia|-34.9285|138.6007|Australia/Adelaide
-Wellington, New Zealand|-41.2866|174.7756|Pacific/Auckland
-Osaka, Japan|34.6937|135.5023|Asia/Tokyo
-Kyoto, Japan|35.0116|135.7681|Asia/Tokyo
-Shenzhen, China|22.5431|114.0579|Asia/Shanghai
-Guangzhou, China|23.1291|113.2644|Asia/Shanghai
-Chengdu, China|30.5728|104.0668|Asia/Shanghai
-Hanoi, Vietnam|21.0278|105.8342|Asia/Ho_Chi_Minh
-Ho Chi Minh City, Vietnam|10.8231|106.6297|Asia/Ho_Chi_Minh
-Yangon, Myanmar|16.8409|96.1735|Asia/Yangon
-Thimphu, Bhutan|27.4728|89.639|Asia/Thimphu
-Islamabad, Pakistan|33.6844|73.0479|Asia/Karachi
-Kabul, Afghanistan|34.5553|69.2075|Asia/Kabul
-Tashkent, Uzbekistan|41.2995|69.2401|Asia/Tashkent
-Almaty, Kazakhstan|43.222|76.8512|Asia/Almaty
-Riyadh, Saudi Arabia|24.7136|46.6753|Asia/Riyadh
-Jeddah, Saudi Arabia|21.4858|39.1925|Asia/Riyadh
-Doha, Qatar|25.2854|51.531|Asia/Qatar
-Abu Dhabi, UAE|24.4539|54.3773|Asia/Dubai
-Kuwait City, Kuwait|29.3759|47.9774|Asia/Kuwait
-Muscat, Oman|23.588|58.3829|Asia/Muscat
-Amman, Jordan|31.9454|35.9284|Asia/Amman
-Beirut, Lebanon|33.8938|35.5018|Asia/Beirut
-Baghdad, Iraq|33.3152|44.3661|Asia/Baghdad
-Addis Ababa, Ethiopia|8.9806|38.7578|Africa/Addis_Ababa
-Accra, Ghana|5.6037|-0.187|Africa/Accra
-Casablanca, Morocco|33.5731|-7.5898|Africa/Casablanca
-Dakar, Senegal|14.7167|-17.4677|Africa/Dakar
-Kampala, Uganda|0.3476|32.5825|Africa/Kampala
-Dar es Salaam, Tanzania|-6.7924|39.2083|Africa/Dar_es_Salaam
-Frankfurt, Germany|50.1109|8.6821|Europe/Berlin
-Hamburg, Germany|53.5511|9.9937|Europe/Berlin
-Lyon, France|45.764|4.8357|Europe/Paris
-Marseille, France|43.2965|5.3698|Europe/Paris
-Naples, Italy|40.8518|14.2681|Europe/Rome
-Glasgow, UK|55.8642|-4.2518|Europe/London
-Birmingham, UK|52.4862|-1.8904|Europe/London
-Helsinki, Finland|60.1699|24.9384|Europe/Helsinki
-Reykjavik, Iceland|64.1466|-21.9426|Atlantic/Reykjavik
-Budapest, Hungary|47.4979|19.0402|Europe/Budapest
-Bucharest, Romania|44.4268|26.1025|Europe/Bucharest
-Belgrade, Serbia|44.7866|20.4489|Europe/Belgrade
-Kyiv, Ukraine|50.4501|30.5234|Europe/Kiev
-Guadalajara, Mexico|20.6597|-103.3496|America/Mexico_City
-Monterrey, Mexico|25.6866|-100.3161|America/Monterrey
-Havana, Cuba|23.1136|-82.3666|America/Havana
-San Juan, Puerto Rico|18.4655|-66.1057|America/Puerto_Rico
-Kingston, Jamaica|17.9712|-76.7936|America/Jamaica
-Port of Spain, Trinidad|10.6549|-61.5019|America/Port_of_Spain
-Caracas, Venezuela|10.4806|-66.9036|America/Caracas
-Quito, Ecuador|-0.1807|-78.4678|America/Guayaquil
-La Paz, Bolivia|-16.4897|-68.1193|America/La_Paz
-Montevideo, Uruguay|-34.9011|-56.1645|America/Montevideo`.split('\n').map(l=>{const [n,la,lo,tz]=l.split('|');return {n,lat:+la,lon:+lo,tz}});
+Sao Paulo, Brazil|-23.5505|-46.6333|America/Sao_Paulo`.split('\n').map(l=>{const [n,la,lo,tz]=l.split('|');return {n,lat:+la,lon:+lo,tz}});
 const SIGNS=[
  {n:'Aries',g:'♈',el:'Fire',core:'a starter who comes alive by acting first',need:'freedom to move on instinct',mask:'direct, quick and ready to go',shadow:'impatience, and burning out on fights you didn\'t need',tags:['lead','freedom']},
  {n:'Taurus',g:'♉',el:'Earth',core:'a builder who makes things real and lasting',need:'steadiness, comfort and time',mask:'calm, grounded and unhurried',shadow:'stubbornness, and holding on to what is already finished',tags:['build']},
@@ -1277,14 +1101,24 @@ const stars=(()=>{let cv=null,ctx,list=[],w=0,h=0,visible=true,looping=false;con
 const cityIn=$('f-city'),cityList=$('city-list');let cityMatches=[],cityActive=-1;
 function cityStatus(){const v=read(),el=$('cityok'),hit=CITIES.find(x=>x.n.toLowerCase()===v.city.toLowerCase());
   el.classList.toggle('miss',!!v.city&&!hit&&!v.lat);
-  el.textContent=v.city&&!hit&&!v.lat?'Not in the list. Pick a suggestion, or enter coordinates below.'
+  el.textContent=v.city&&!hit&&!v.lat?'Pick a place from the suggestions, or enter coordinates below.'
     :v.lat&&v.lon?`Using ${(+v.lat).toFixed(2)}, ${(+v.lon).toFixed(2)} · ${v.tz}`:''}
-function showCities(){const t=cityIn.value.trim().toLowerCase();
-  cityMatches=(t?CITIES.filter(c=>c.n.toLowerCase().includes(t)).sort((a,b)=>(b.n.toLowerCase().startsWith(t))-(a.n.toLowerCase().startsWith(t))):CITIES).slice(0,60);
-  cityActive=cityMatches.length?0:-1;drawCities();cityList.hidden=false;cityIn.setAttribute('aria-expanded','true')}
+// City search: worldwide lookup through Open-Meteo's free geocoding API (OpenStreetMap/GeoNames data, returns
+// coordinates and the IANA time zone). If the request is blocked or offline, the 50-city list above is used.
+let geoOK=true,geoTimer=0,geoSeq=0,geoBusy=false;const geoCache={};
+async function geocode(q){const k=q.toLowerCase();if(geoCache[k])return geoCache[k];
+  const r=await fetch('https://geocoding-api.open-meteo.com/v1/search?count=10&language=en&format=json&name='+encodeURIComponent(q));if(!r.ok)throw new Error('geocode '+r.status);
+  const j=await r.json();return geoCache[k]=(j.results||[]).filter(x=>x.timezone).map(x=>({n:[x.name,x.admin1&&x.admin1!==x.name?x.admin1:'',x.country].filter(Boolean).join(', '),lat:+(+x.latitude).toFixed(4),lon:+(+x.longitude).toFixed(4),tz:x.timezone}))}
+function localCities(t){return (t?CITIES.filter(c=>c.n.toLowerCase().includes(t)).sort((a,b)=>(b.n.toLowerCase().startsWith(t))-(a.n.toLowerCase().startsWith(t))):CITIES).slice(0,60)}
+function showCities(){const raw=cityIn.value.trim(),t=raw.toLowerCase();
+  cityMatches=localCities(t);cityActive=cityMatches.length?0:-1;geoBusy=geoOK&&raw.length>=2;drawCities();cityList.hidden=false;cityIn.setAttribute('aria-expanded','true');
+  clearTimeout(geoTimer);if(!geoBusy)return;const my=++geoSeq;
+  geoTimer=setTimeout(async()=>{try{const res=await geocode(raw);if(my!==geoSeq||cityIn.value.trim()!==raw)return;geoBusy=false;
+      if(res.length){cityMatches=res;cityActive=0}drawCities()}
+    catch(e){geoOK=false;geoBusy=false;if(my===geoSeq)drawCities()}},220)}
 function drawCities(){cityList.innerHTML=cityMatches.length?cityMatches.map((c,i)=>{const [city,...rest]=c.n.split(', ');
     return `<li role="option" id="city-${i}" data-i="${i}" aria-selected="${i===cityActive}">${esc(city)}<small>${esc(rest.join(', '))}</small></li>`}).join('')
-    :'<li class="none">No match. Open "Coordinates and time zone" to enter it by hand.</li>';
+    :(geoBusy?'<li class="none">Searching…</li>':'<li class="none">No match. Open "Coordinates and time zone" to enter it by hand.</li>');
   if(cityActive>=0){cityIn.setAttribute('aria-activedescendant','city-'+cityActive);$('city-'+cityActive).scrollIntoView({block:'nearest'})}}
 function hideCities(){cityList.hidden=true;cityIn.setAttribute('aria-expanded','false')}
 function pickCity(c){cityIn.value=c.n;setF('lat',c.lat);setF('lon',c.lon);setF('tz',c.tz);hideCities();isExample=false;calcChart(true);save(read());cityStatus();render()}
@@ -1483,7 +1317,7 @@ async function exportPdf(btn){
 const saved=load();calcChart(!saved);render();cityStatus();
 document.querySelector('aside').addEventListener('input',e=>{
   isExample=false;const k=e.target.id.slice(2);
-  if(k==='city'){showCities();const hit=CITIES.find(x=>x.n.toLowerCase()===e.target.value.trim().toLowerCase());if(hit){setF('lat',hit.lat);setF('lon',hit.lon);setF('tz',hit.tz)}else{setF('lat','');setF('lon','')}}
+  if(k==='city'){showCities();const hit=[...cityMatches,...CITIES].find(x=>x.n.toLowerCase()===e.target.value.trim().toLowerCase());if(hit){setF('lat',hit.lat);setF('lon',hit.lon);setF('tz',hit.tz)}else{setF('lat','');setF('lon','')}}
   if(k==='unk')$('f-time').disabled=e.target.checked;
   queueMicrotask(cityStatus);
   if(BIRTH.includes(k)||k==='city')calcChart(true);else calcChart(false);
