@@ -299,6 +299,36 @@ body.touring #out>.hdr.tour-on,body.touring #out>.foot.tour-on{border-radius:8px
 .tb-skip{background:none;border:0;color:#a9b29a;text-decoration:underline;text-underline-offset:3px;padding:9px 4px!important;margin-right:auto}
 .tour-bar button:focus-visible{outline:2px solid #e2b86a;outline-offset:2px}
 @media (max-width:520px){.tour-bar{padding:12px 14px}.tb-cap{font-size:16px;max-height:6em}.tour-bar button{padding:8px 12px;font-size:13px}.tb-next{min-width:96px}}
+.sky{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:1.3rem 1.4rem;display:grid;gap:1.2rem}
+.sky-head h3{font-size:1.5rem}.sky-head p{margin:.3rem 0 0;color:var(--muted);font-size:.95rem}
+.sky-grid{display:grid;gap:1.4rem}
+@container (min-width:760px){.sky-grid{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:center}}
+.sky-wheel svg{width:100%;max-width:440px;display:block;margin:0 auto;height:auto}
+.skyw .zs{fill:color-mix(in srgb,var(--c) 10%,transparent);stroke:rgba(239,232,214,.14);stroke-width:.8}
+.skyw .zg,.skyw .pl text,.hs2,.pg,.hp{font-family:'Apple Symbols','Segoe UI Symbol','Noto Sans Symbols 2','Noto Sans Symbols',sans-serif!important}
+.skyw .zg{font-size:17px;text-anchor:middle;pointer-events:none}
+.skyw .tk{stroke:rgba(239,232,214,.22);stroke-width:.7}
+.skyw .ring{fill:none;stroke:rgba(239,232,214,.22)}
+.skyw .hs{fill:transparent;cursor:pointer;transition:fill .25s}
+.skyw .hs:hover{fill:rgba(226,184,106,.08)}.skyw .hs.on{fill:rgba(226,184,106,.2)}
+.skyw .cu{stroke:rgba(239,232,214,.2);stroke-width:.8}.skyw .cu.ang{stroke:#e2b86a;stroke-width:1.4}
+.skyw .hn{font:600 7.5px var(--mono);fill:#a9b29a;text-anchor:middle;pointer-events:none}
+.skyw .ax{font:600 9px var(--mono);fill:#e2b86a;letter-spacing:.08em}
+.skyw .ctr{font:500 11px var(--display);fill:#efe8d6;text-anchor:middle}.skyw .ctr2{font:500 7.5px var(--mono);fill:#a9b29a;text-anchor:middle;letter-spacing:.1em;text-transform:uppercase}
+.skyw .pl-tick{stroke:#e2b86a;stroke-width:1;opacity:.7}
+.skyw .pl{cursor:pointer}.skyw .pl circle{fill:#253021;stroke:#a9b29a;stroke-width:1;transition:fill .2s,stroke .2s}
+.skyw .pl text{font-size:15px;fill:#efe8d6;text-anchor:middle;pointer-events:none}.skyw .pl text.rx{font-size:7.5px;fill:#e2b86a}
+.skyw .pl:hover circle{stroke:#e2b86a}.skyw .pl.on circle{fill:#e2b86a;stroke:#e2b86a}.skyw .pl.on text:not(.rx){fill:#1f271c}
+.skyw .pl:focus-visible{outline:none}.skyw .pl:focus-visible circle{stroke:#e2b86a;stroke-width:2}
+.sky-lists{display:grid;gap:1.2rem}
+@container (min-width:760px){.sky-lists{grid-template-columns:1.3fr 1fr}.sky-lists.one{grid-template-columns:1fr}.sky-lists.one .plist{grid-template-columns:1fr 1fr;column-gap:1.2rem}}
+.hlist,.plist{display:grid;gap:4px}
+.hrow,.prow{display:grid;align-items:center;gap:10px;text-align:left;font:inherit;color:var(--ink);background:none;border:1px solid transparent;border-radius:10px;padding:6px 10px;cursor:pointer;transition:background .2s,border-color .2s}
+.hrow{grid-template-columns:1.6rem 1fr auto 5.2rem}.prow{grid-template-columns:1.6rem 1fr auto}
+.hrow:hover,.prow:hover{background:var(--accent-soft)}.hrow.on,.prow.on{border-color:var(--clay);background:color-mix(in srgb,var(--clay) 8%,transparent)}
+.hrow b{font:600 13px var(--mono);color:var(--clay)}.hn2,.pn{font-weight:600;font-size:.93rem}.hs2,.ps{color:var(--muted);font-size:.88rem;white-space:nowrap}
+.hp{text-align:right;color:var(--accent);letter-spacing:2px}.pg{font-size:1.1rem;color:var(--clay);text-align:center}.pn i{font-style:normal;color:var(--clay);font-size:.8rem}
+.exporting .skyw .zs{fill:transparent}
 .fig-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .fig-row button{font:600 12.5px var(--body);color:var(--accent);background:var(--surface);border:1px solid var(--accent);border-radius:999px;padding:4px 11px;cursor:pointer}
 .fig-row button[aria-pressed="true"]{background:var(--accent);color:var(--paper)}
@@ -467,7 +497,21 @@ function zonedToUtc(y,mo,d,h,mi,tz){
     const shown=Date.UTC(+p.year,+p.month-1,+p.day,+p.hour%24,+p.minute,+p.second);t+=want-shown}
   return new Date(t);}
 const signOf=lon=>Math.floor(norm(lon)/30);
-return {bodygraph,ascendant,zonedToUtc,signOf,lonOf,gateLine,CH,G2C};
+// Placidus houses: cusps 11, 12, 2, 3 found by iterating each point's hour angle as a fraction of its semi-arc.
+// Above ~66° latitude Placidus has no solution, so Porphyry (quadrant trisection) is used instead.
+function houses(d,lat,lonE){
+  const T=(A.MakeTime(d).tt)/36525,eps=(23.4392911-0.0130042*T)*rad,phi=lat*rad,ramc=norm(A.SiderealTime(d)*15+lonE);
+  const lam=ra=>norm(Math.atan2(Math.sin(ra*rad),Math.cos(ra*rad)*Math.cos(eps))/rad);
+  const mc=lam(ramc),asc=ascendant(d,lat,lonE);
+  const cusp=(f,below)=>{let l=lam(below?ramc+180-f*90:ramc+f*90);
+    for(let i=0;i<60;i++){const dec=Math.asin(Math.sin(eps)*Math.sin(l*rad)),x=Math.tan(phi)*Math.tan(dec);if(Math.abs(x)>=1)return null;
+      const ad=Math.asin(x)/rad,n=lam(below?ramc+180-f*(90-ad):ramc+f*(90+ad));if(Math.abs(((n-l+540)%360)-180)<1e-8){l=n;break}l=n}
+    return l};
+  let c11=cusp(1/3,false),c12=cusp(2/3,false),c2=cusp(2/3,true),c3=cusp(1/3,true),system='Placidus';
+  if([c11,c12,c2,c3].some(v=>v==null)){system='Porphyry';const q1=norm(asc-mc),q2=norm(mc+180-asc);c11=norm(mc+q1/3);c12=norm(mc+2*q1/3);c2=norm(asc+q2/3);c3=norm(asc+2*q2/3)}
+  return {system,asc,mc,cusps:[asc,c2,c3,norm(mc+180),norm(c11+180),norm(c12+180),norm(asc+180),norm(c2+180),norm(c3+180),mc,c11,c12]}}
+function speed(body,d){if(body==='Sun'||body==='Moon')return 1;let x=lonOf(body,new Date(d.getTime()+864e5))-lonOf(body,d);return ((x+540)%360)-180}
+return {bodygraph,ascendant,zonedToUtc,signOf,lonOf,gateLine,CH,G2C,houses,speed,trueNode};
 })();
 </script>
 <script>
@@ -642,7 +686,8 @@ const FIGURES=[
   v:{name:'Anish Ghosh',date:'',time:'',moon:'Capricorn',rising:'Cancer',type:'Generator',auth:'Sacral',profile:'6/2',enn:'4'},
   derived:{sun:'Gemini',lp:8,expr:9,soul:7,py2026:7,animal:4,element:'Metal',
     v:{name:'Anish Ghosh',moon:'Capricorn',rising:'Cancer',type:'Generator',auth:'Sacral',profile:'6/2',enn:'4'},
-    bg:{type:'Generator',auth:'Sacral',profile:'6/2',defined:['G','Sacral'],channels:[[15,5]],defn:'Single Definition',crossName:'Left Angle Cross of Education',cross:[],P:{},D:{},priv:[15,5]}}}
+    bg:Object.assign({"type":"Generator","auth":"Sacral","profile":"6/2","defined":["G","Sacral"],"channels":[[15,5]],"defn":"Single Definition","cross":[12,11,25,46],"P":{"Sun":{"gate":12,"line":6},"Moon":{"gate":38,"line":6},"Mercury":{"gate":53,"line":5},"Venus":{"gate":15,"line":2},"Mars":{"gate":15,"line":4},"Jupiter":{"gate":8,"line":4},"Saturn":{"gate":8,"line":1},"Uranus":{"gate":49,"line":2},"Neptune":{"gate":41,"line":5},"Pluto":{"gate":9,"line":6},"Earth":{"gate":11,"line":6},"North Node":{"gate":62,"line":5},"South Node":{"gate":61,"line":5}},"D":{"Sun":{"gate":25,"line":2},"Moon":{"gate":6,"line":4},"Mercury":{"gate":55,"line":5},"Venus":{"gate":37,"line":3},"Mars":{"gate":3,"line":2},"Jupiter":{"gate":27,"line":5},"Saturn":{"gate":2,"line":1},"Uranus":{"gate":49,"line":1},"Neptune":{"gate":41,"line":5},"Pluto":{"gate":5,"line":2},"Earth":{"gate":46,"line":2},"North Node":{"gate":31,"line":1},"South Node":{"gate":41,"line":1}}},{crossName:'Left Angle Cross of Education'}),
+    sky:{"planets":[{"b":"Sun","lon":87.58,"rx":false},{"b":"Moon","lon":285.05,"rx":false},{"b":"Mercury","lon":109.08,"rx":false},{"b":"Venus","lon":89.53,"rx":false},{"b":"Mars","lon":91.36,"rx":false},{"b":"Jupiter","lon":57.47,"rx":false},{"b":"Saturn","lon":55.26,"rx":false},{"b":"Uranus","lon":320.59,"rx":true},{"b":"Neptune","lon":306.15,"rx":true},{"b":"Pluto","lon":251.09,"rx":true},{"b":"North Node","lon":114.63,"rx":false}],"houses":{"system":"Placidus","asc":119.91,"mc":23.64,"cusps":[119.91,144.01,171.73,203.64,237.45,269.94,299.91,324.01,351.73,23.64,57.45,89.94]}}}}
 ];
 let fig=FIGURES[0];
 const figValues=f=>({unk:false,moon:'',rising:'',type:'',auth:'',profile:'',enn:'',...f.v});
@@ -696,7 +741,8 @@ function calcChart(apply){
     if(a.type!==bg.type||b.type!==bg.type)warn.push('Human Design type');
     if(a.auth!==bg.auth||b.auth!==bg.auth)warn.push('authority');
     if(a.profile!==bg.profile||b.profile!==bg.profile)warn.push('profile')}
-  chart={u,bg,asc,unk,hasPlace,sunI:HD.signOf(bg.P.Sun.lon),moonI:HD.signOf(bg.P.Moon.lon),sunDeg:bg.P.Sun.lon%30,moonDeg:bg.P.Moon.lon%30,ascDeg:asc==null?null:asc%30};
+  chart={u,bg,asc,unk,hasPlace,sunI:HD.signOf(bg.P.Sun.lon),moonI:HD.signOf(bg.P.Moon.lon),sunDeg:bg.P.Sun.lon%30,moonDeg:bg.P.Moon.lon%30,ascDeg:asc==null?null:asc%30,
+    sky:{planets:[...SKY_BODIES.slice(0,10).map(b=>({b,lon:HD.lonOf(b,u),rx:HD.speed(b,u)<0})),{b:'North Node',lon:bg.P['North Node'].lon,rx:false}],houses:!unk&&hasPlace?HD.houses(u,lat,lon):null,unk}};
   if(apply){
     setF('moon',SIGNS[chart.moonI].n);setF('rising',asc==null?'':SIGNS[HD.signOf(asc)].n);
     setF('type',bg.type);setF('auth',bg.auth);
@@ -910,6 +956,71 @@ function bodySVG(bg){
 }
 
 let selId=null,selTheme=null,selTab=0,lastKey='',RD=null;
+// ---------- The full sky: planets in signs and Placidus houses ----------
+const SKY_BODIES=['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto','North Node'];
+const PLANET_INFO={Sun:['☉','core self and vitality','shine'],Moon:['☽','emotions and needs','feel'],Mercury:['☿','mind and communication','think and talk'],
+  Venus:['♀','love, beauty and values','love and connect'],Mars:['♂','drive, desire and courage','go after what you want'],Jupiter:['♃','growth, luck and faith','grow and find luck'],
+  Saturn:['♄','discipline, limits and mastery','build discipline'],Uranus:['♅','change, freedom and originality','break the mold'],Neptune:['♆','dreams, intuition and spirituality','dream'],
+  Pluto:['♇','power and transformation','transform'],'North Node':['☊','the direction you\'re growing toward','grow']};
+const OUTER=['Uranus','Neptune','Pluto'];
+const PLANET_SHORT={Sun:'core self',Moon:'feelings',Mercury:'mind',Venus:'love',Mars:'drive',Jupiter:'growth',Saturn:'discipline',Uranus:'change',Neptune:'dreams',Pluto:'power','North Node':'growth path'};
+const SIGN_STYLE=['boldly and directly','steadily and sensually','curiously and playfully','protectively and tenderly','warmly and dramatically','carefully and precisely',
+  'gracefully and fairly','intensely and privately','adventurously and honestly','patiently and ambitiously','originally and independently','dreamily and compassionately'];
+const HOUSES=[['Self','your identity, body and first impressions'],['Money','income, possessions and self-worth'],['Communication','learning, siblings, neighbors and everyday talk'],
+  ['Home','family, roots and your private life'],['Joy','creativity, romance, play and children'],['Work and health','daily routines, service and wellness'],
+  ['Partnership','marriage, close one-on-one bonds and contracts'],['Intimacy','sex, shared money, trust and deep change'],['Exploration','travel, higher learning and beliefs'],
+  ['Career','ambition, reputation and public life'],['Community','friends, groups and hopes for the future'],['The unseen','solitude, spirituality, endings and the subconscious']];
+const ORD=n=>n+(n%100>10&&n%100<14?'th':['th','st','nd','rd'][n%10]||'th');
+const EL_COL={Fire:'#e3956a',Earth:'#bfcd92',Air:'#a8c7dc',Water:'#86aed0'};
+let skySel=null;
+function houseOf(lon,H){if(!H)return null;const c=H.cusps;for(let i=0;i<12;i++){const a=c[i],b=c[(i+1)%12],w=((b-a)+360)%360,d=((lon-a)+360)%360;if(d<w)return i+1}return 1}
+function skyData(sky){const H=sky.houses;return {H,planets:sky.planets.map(p=>({...p,sign:Math.floor(((p.lon%360)+360)%360/30),deg:(((p.lon%360)+360)%360)%30,house:houseOf(p.lon,H)}))}}
+const dms=x=>`${Math.floor(x)}°${String(Math.floor((x%1)*60)).padStart(2,'0')}′`;
+function skyText(kind,id,sd){const S=SIGNS;
+  if(kind==='planet'){const p=sd.planets.find(x=>x.b===id),I=PLANET_INFO[id],sg=S[p.sign];
+    return {k:`${I[0]} ${id}${p.rx?' · retrograde':''}`,h:`${id} in ${sg.n}`,sub:`${dms(p.deg)} ${sg.n}${p.house?` · ${ORD(p.house)} house`:''}`,
+      t:`${id} is your ${I[1]}. In ${sg.n}, you ${I[2]} ${SIGN_STYLE[p.sign]}.${p.house?` It sits in your ${ORD(p.house)} house, so this plays out through ${HOUSES[p.house-1][1]}.`:''}${OUTER.includes(id)?` ${id} moves slowly, so everyone born within a few years shares this sign; the house is the personal part.`:''}${p.rx?' It was retrograde at birth, which astrologers read as this energy turning inward: you process it privately and come back to it.':''}`}}
+  const n=+id,[name,theme]=HOUSES[n-1],cusp=sd.H.cusps[n-1],sg=S[Math.floor(cusp/30)],here=sd.planets.filter(p=>p.house===n);
+  return {k:`${ORD(n)} house${n===1?' · Ascendant':n===10?' · Midheaven':''}`,h:name,sub:`begins at ${dms(cusp%30)} ${sg.n}`,
+    t:`This is the house of ${theme}. It begins in ${sg.n}, so you approach it ${SIGN_STYLE[Math.floor(cusp/30)]}.${n===1?' Its starting point is your Rising sign.':''}${n===10?' Its starting point, the Midheaven, is the highest point of the chart and is read for career and public image.':''} ${here.length?`Here you have ${(xs=>xs.length<2?xs[0]:xs.slice(0,-1).join(', ')+' and '+xs.at(-1))(here.map(p=>`${p.b} (${PLANET_SHORT[p.b]})`))}, so this part of life gets extra focus.`:'No planets sit here, so this area runs more quietly, colored by its sign.'}`}}
+function skySVG(sd){const C=200,f=n=>n.toFixed(1),H=sd.H,ref=H?H.asc:0,TAU=Math.PI*2;
+  const ang=l=>Math.PI+((l-ref)*Math.PI/180),P=(r,l)=>[C+r*Math.cos(ang(l)),C-r*Math.sin(ang(l))],pt=(r,l)=>P(r,l).map(f).join(',');
+  const arc=(r1,r2,a,b)=>{const w=((b-a)+360)%360,lg=w>180?1:0;return `M${pt(r2,a)} A${r2},${r2} 0 ${lg} 0 ${pt(r2,b)} L${pt(r1,b)} A${r1},${r1} 0 ${lg} 1 ${pt(r1,a)} Z`};
+  let z='';for(let i=0;i<12;i++){const sg=SIGNS[i];z+=`<path class="zs" d="${arc(160,192,i*30,i*30+30)}" style="--c:${EL_COL[sg.el]}"/><text class="zg" x="${f(P(176,i*30+15)[0])}" y="${f(P(176,i*30+15)[1]+5)}" style="fill:${EL_COL[sg.el]}">${sg.g}︎</text>`}
+  let ticks='';for(let d=0;d<360;d+=5)ticks+=`<line class="tk" x1="${f(P(160,d)[0])}" y1="${f(P(160,d)[1])}" x2="${f(P(d%30?156:151,d)[0])}" y2="${f(P(d%30?156:151,d)[1])}"/>`;
+  let hs='';if(H)for(let i=0;i<12;i++){const a=H.cusps[i],b=H.cusps[(i+1)%12],w=((b-a)+360)%360,m=a+w/2,big=i%3===0;
+    hs+=`<path class="hs" data-h="${i+1}" d="${arc(62,150,a,b)}"><title>${ORD(i+1)} house: ${HOUSES[i][0]}</title></path><line class="cu${big?' ang':''}" x1="${f(P(62,a)[0])}" y1="${f(P(62,a)[1])}" x2="${f(P(160,a)[0])}" y2="${f(P(160,a)[1])}"/><text class="hn" x="${f(P(70,m)[0])}" y="${f(P(70,m)[1]+3)}">${i+1}</text>`}
+  const angles=H?[['ASC',H.asc],['MC',H.mc]].map(([t,l])=>`<text class="ax" x="${f(P(198,l)[0])}" y="${f(P(198,l)[1]+3)}" text-anchor="${t==='ASC'?'end':'middle'}" dy="${t==='MC'?-4:0}">${t}</text>`).join(''):'';
+  // planets close together stack inward at their true angle, so each stays inside its own house slice
+  const RAD=[128,105,84],pl=sd.planets.map(p=>({...p})).sort((x,y)=>x.lon-y.lon),placed=[[],[],[]];
+  pl.forEach(p=>{let lv=0;for(;lv<2;lv++)if(!placed[lv].some(o=>Math.abs(((o-p.lon+540)%360)-180)<10.5))break;placed[lv].push(p.lon);p.r=RAD[lv]});
+  const planets=pl.map(p=>{const [x,y]=P(p.r,p.lon),[tx,ty]=P(150,p.lon),[ux,uy]=P(160,p.lon);return `<line class="pl-tick" x1="${f(tx)}" y1="${f(ty)}" x2="${f(ux)}" y2="${f(uy)}"/><g class="pl" data-p="${p.b}" tabindex="0" role="button" aria-label="${p.b} in ${SIGNS[p.sign].n}${p.house?', house '+p.house:''}"><circle cx="${f(x)}" cy="${f(y)}" r="11.5"/><text x="${f(x)}" y="${f(y+4.6)}">${PLANET_INFO[p.b][0]}︎</text>${p.rx?`<text class="rx" x="${f(x+11)}" y="${f(y-7)}">℞</text>`:''}</g>`}).join('');
+  return `<svg class="skyw" viewBox="-30 -16 460 432" role="group" aria-label="Birth chart wheel. Select a planet or house to read it.">
+    <defs><radialGradient id="skybg" cx="40%" cy="35%" r="75%"><stop offset="0" stop-color="#2e3a29"/><stop offset=".65" stop-color="#1f271c"/><stop offset="1" stop-color="#161c14"/></radialGradient></defs>
+    <circle cx="${C}" cy="${C}" r="194" fill="url(#skybg)"/>${z}${ticks}<circle class="ring" cx="${C}" cy="${C}" r="160"/>${hs}<circle class="ring" cx="${C}" cy="${C}" r="62"/>
+    <circle cx="${C}" cy="${C}" r="61" fill="#161c14"/><text class="ctr" x="${C}" y="${C-3}">${H?'Placidus':'No birth time'}</text><text class="ctr2" x="${C}" y="${C+12}">${H?(H.system==='Placidus'?'houses':'Porphyry houses'):'signs only'}</text>
+    ${angles}${planets}</svg>`}
+function skySection(sd){
+  const rows=sd.H?HOUSES.map(([n],i)=>{const sg=SIGNS[Math.floor(sd.H.cusps[i]/30)],here=sd.planets.filter(p=>p.house===i+1);
+    return `<button type="button" class="hrow" data-h="${i+1}"><b>${i+1}</b><span class="hn2">${n}</span><span class="hs2">${sg.g}︎ ${sg.n}</span><span class="hp">${here.map(p=>PLANET_INFO[p.b][0]+'︎').join(' ')}</span></button>`}).join(''):'';
+  const prow=sd.planets.map(p=>`<button type="button" class="prow" data-p="${p.b}"><span class="pg">${PLANET_INFO[p.b][0]}︎</span><span class="pn">${p.b}${p.rx?' <i>℞</i>':''}</span><span class="ps">${SIGNS[p.sign].n}${p.house?` · ${ORD(p.house)}`:''}</span></button>`).join('');
+  return `<section class="sky pblock" id="sky"><div class="sky-head"><h3>The full sky</h3><p>Every planet, the sign it was in, and the house of life it falls in.${sd.H?'':' <b>Add a birth time and place to draw the 12 houses.</b>'}</p></div>
+    <div class="sky-grid"><div class="sky-wheel">${skySVG(sd)}</div><div class="sky-card bgx-card"></div></div>
+    <div class="sky-lists${sd.H?'':' one'}">${sd.H?`<div><p class="sm-k">The 12 houses</p><div class="hlist">${rows}</div></div>`:''}<div><p class="sm-k">The planets</p><div class="plist">${prow}</div></div></div></section>`}
+function skyCard(sd,sel){
+  if(!sel)return `<p class="k">How to read the sky</p><h4>Signs, houses, planets</h4><ul>
+    <li><b>The outer ring is the 12 signs</b>, the "how": each planet acts in the style of the sign it's in.</li>
+    ${sd.H?'<li><b>The inner slices are the 12 houses</b>, the "where": the area of life a planet plays out in. They start at the <b>Ascendant (ASC)</b> on the left, the horizon at birth, and run counterclockwise. The <b>Midheaven (MC)</b> at the top is the career point.</li>':'<li><b>Houses need an exact birth time and place</b>, so this chart shows the planets in their signs only.</li>'}
+    <li><b>The symbols are the planets</b>, the "what": ☉ Sun, ☽ Moon, ☿ Mercury, ♀ Venus, ♂ Mars, ♃ Jupiter, ♄ Saturn, ♅ Uranus, ♆ Neptune, ♇ Pluto, ☊ North Node. ℞ means retrograde.</li></ul>
+    <p class="muted">Tap a planet or a house, on the wheel or in the lists.</p>`;
+  const [k,id]=sel.split(':'),T=skyText(k,id,sd);return `<p class="k">${T.k}</p><h4>${T.h}</h4><p class="muted">${T.sub}</p><p>${T.t}</p><p><button type="button" class="lnk" data-sky="">← How to read it</button></p>`}
+function bindSky(sd){const root=$('sky');if(!root)return;const card=root.querySelector('.sky-card');
+  const show=v=>{skySel=v;card.innerHTML=skyCard(sd,v);card.classList.remove('swap');void card.offsetWidth;card.classList.add('swap');
+    root.querySelectorAll('.on').forEach(e=>e.classList.remove('on'));if(v){const [k,id]=v.split(':');root.querySelectorAll(k==='planet'?`[data-p="${id}"]`:`[data-h="${id}"]`).forEach(e=>e.classList.add('on'))}
+    card.querySelectorAll('[data-sky]').forEach(b=>b.addEventListener('click',()=>show(null)))};
+  root.addEventListener('click',e=>{const t=e.target.closest('[data-p],[data-h]');if(t&&root.contains(t))show(t.dataset.p?'planet:'+t.dataset.p:'house:'+t.dataset.h)});
+  root.addEventListener('keydown',e=>{if(e.key!=='Enter'&&e.key!==' ')return;const t=e.target.closest('.pl');if(t){e.preventDefault();show('planet:'+t.dataset.p)}});
+  show(skySel&&(skySel.startsWith('planet')||sd.H)?skySel:null)}
 function render(){
   const v=read();const c=compute(v);const out=$('out');
   const a=$('auto');
@@ -997,7 +1108,8 @@ function render(){
       <button type="button" class="bg-toggle" id="bg-toggle" aria-expanded="${bgOpen}">${bgOpen?'Hide the detailed map ▴':'Explore the bodygraph ▾'}</button>`
     :'<p class="sm-small">Add your birth date to draw the bodygraph.</p>';
   const monthName=new Date(c.cy,c.cm-1,1).toLocaleString('en',{month:'long'});
-  RD={c,S,L,C1,C2,P,themes,thesis:thesis.replace(/<[^>]+>/g,''),st,careers,elText:elText.replace(/<[^>]+>/g,''),Y,M,watch,prac,bg,first,monthName};
+  const SKYD=(isExample&&fig.derived&&fig.derived.sky)?skyData(fig.derived.sky):(chart&&chart.sky?skyData(chart.sky):null);
+  RD={SKYD,c,S,L,C1,C2,P,themes,thesis:thesis.replace(/<[^>]+>/g,''),st,careers,elText:elText.replace(/<[^>]+>/g,''),Y,M,watch,prac,bg,first,monthName};
 
   // Redraw the pop-in animation only when the set of placements changes, not on every keystroke.
   const key=P.map(p=>p.id+p.value).join();const fresh=key!==lastKey;lastKey=key;
@@ -1034,6 +1146,7 @@ function render(){
   ${bg&&bgOpen?`<section class="bg-explore pblock" id="bg-explore"><div class="bgx-head"><h3>Your bodygraph, up close</h3>
       <div class="bgx-legend"><span><i style="background:#2a2a24;border-color:#2a2a24"></i>conscious</span><span><i style="background:#c0473a;border-color:#c0473a"></i>unconscious</span><span><i style="background:#d9a94e;border-color:#b98a30"></i>both</span><span><i style="border:0;width:auto;height:auto;font:600 11px var(--mono)">12</i>number only = inactive gate</span></div></div>
       <div class="bgx-svg">${explorerSVG(bg)}</div><div class="bgx-card"></div></section>`:''}
+  ${SKYD?skySection(SKYD):''}
   <div class="sm-tabs">
     <div class="sm-tablist" role="tablist" aria-label="Life areas">${tabs.map(([h],i)=>`<button type="button" role="tab" id="smt-${i}" aria-controls="smp-${i}" aria-selected="${i===selTab}" tabindex="${i===selTab?0:-1}">${h}</button>`).join('')}</div>
     ${tabs.map(([h,b,src],i)=>`<div class="sm-tabpanel pblock" role="tabpanel" id="smp-${i}" aria-labelledby="smt-${i}"${i===selTab?'':' hidden'}><h3 class="ptitle">${h}</h3><div class="src">${src}</div>${b}</div>`).join('')}
@@ -1051,6 +1164,7 @@ function render(){
   fitCore(out);
   if($('bg-toggle'))$('bg-toggle').addEventListener('click',()=>{bgOpen=!bgOpen;render();if(bgOpen)$('bg-explore')?.scrollIntoView({behavior:'smooth',block:'start'})});
   if(bg&&bgOpen)bindExplorer(bg);
+  if(SKYD)bindSky(SKYD);
   $('pdf').addEventListener('click',()=>exportPdf($('pdf')));
   if($('back'))$('back').addEventListener('click',backToSpawn);
   if($('play'))$('play').addEventListener('click',()=>TOUR.start());
@@ -1206,6 +1320,10 @@ const TOUR=(()=>{
         say:()=>{const x=q(`.sm-theme[data-theme="${k}"]`),idx=[...document.querySelectorAll('#blueprint .sm-theme')].indexOf(x);return `${['Here\'s where it gets interesting.','Another thread runs through the map.','And one more.','One last thread.'][Math.min(idx,3)]} ${x.querySelector('.cnt').textContent} different parts of your chart all point toward ${x.querySelector('b').textContent.toLowerCase()}. ${x.querySelector('.tx').textContent}`}})});
     S.push({t:'Numerology',el:'.sm-trio',focus:'.sm-trio>.sm-panel:first-child',say:()=>story('nums')});
     S.push({t:'Human Design',el:'.sm-trio',focus:'.sm-bg',dive:true,say:()=>story('hd')});
+    if(RD.SKYD){const sd=RD.SKYD;
+      S.push({t:'The full sky',el:'#sky',act:()=>{const b=q('.sky-card [data-sky=""]');if(b)fire(b)},say:()=>`Now, the full sky. Beyond the big three, every planet sits in a sign${sd.H?' and in one of twelve houses. The sign is how it acts, and the house is where in life it shows up.':'. Houses need an exact birth time, so here we\'ll look at the signs.'} Let's go planet by planet.`});
+      sd.planets.filter(p=>!['Sun','Moon'].includes(p.b)).forEach((p,n)=>S.push({t:p.b,el:'#sky',focus:'.sky-card',align:'bottom',act:()=>fire(q(`.prow[data-p="${p.b}"]`)),say:()=>`${['First, ','Next, ','Then ','Now ','Next, '][Math.min(n,4)]}${p.b}. ${skyText('planet',p.b,sd).t}`}));
+      if(sd.H)for(let h=1;h<=12;h++)S.push({t:ORD(h)+' house',el:'#sky',focus:'.sky-card',align:'bottom',act:()=>fire(q(`.hrow[data-h="${h}"]`)),say:()=>`${h===1?'Now the houses, starting with the 1st, the house of the self.':`The ${ORD(h)} house, ${HOUSES[h-1][0].toLowerCase()}.`} ${skyText('house',h,sd).t}`});}
     S.push({t:'Element balance',el:'.sm-trio',focus:'.sm-trio>.sm-panel:last-child',say:()=>story('elements')});
     document.querySelectorAll('.sm-tablist [role="tab"]').forEach((tb,j)=>S.push({t:tb.textContent,el:'.sm-tabs',act:()=>fire($('smt-'+j)),
       say:()=>tabStory(tb.textContent,j)}));
