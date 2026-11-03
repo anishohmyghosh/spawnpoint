@@ -41,9 +41,9 @@ label{font-size:13px;font-weight:600}
 input,select{font:15px var(--body);color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:8px 10px;width:100%;box-sizing:border-box;min-width:0}
 input:focus-visible,select:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .dt{position:relative;display:block;min-width:0}
-.dt.empty input:not(:focus){color:transparent}
-.dt.empty input:not(:focus)::-webkit-datetime-edit{color:transparent}
-.dt.empty:not(:focus-within)::after{content:attr(data-ph);position:absolute;left:11px;top:50%;transform:translateY(-50%);font:15px var(--body);color:var(--muted);pointer-events:none}
+.dt.empty:not(:focus-within) input{opacity:0}
+.dt.empty:not(:focus-within)::before{content:attr(data-ph);position:absolute;inset:0;display:flex;align-items:center;padding:0 10px;box-sizing:border-box;border:1px solid var(--line);border-radius:4px;background:var(--paper);font:15px var(--body);color:var(--muted);pointer-events:none}
+.dt.empty:has(input:disabled)::before{opacity:.55}
 .auto{font:13px var(--mono);color:var(--muted)}
 .auto b{color:var(--ink);font-weight:500}
 .hint{font-size:12.5px;color:var(--muted);margin:0}
