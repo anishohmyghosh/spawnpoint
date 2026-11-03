@@ -40,6 +40,10 @@ legend{padding:0;margin-bottom:10px}
 label{font-size:13px;font-weight:600}
 input,select{font:15px var(--body);color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:8px 10px;width:100%;box-sizing:border-box;min-width:0}
 input:focus-visible,select:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.dt{position:relative;display:block;min-width:0}
+.dt.empty input:not(:focus){color:transparent}
+.dt.empty input:not(:focus)::-webkit-datetime-edit{color:transparent}
+.dt.empty:not(:focus-within)::after{content:attr(data-ph);position:absolute;left:11px;top:50%;transform:translateY(-50%);font:15px var(--body);color:var(--muted);pointer-events:none}
 .auto{font:13px var(--mono);color:var(--muted)}
 .auto b{color:var(--ink);font-weight:500}
 .hint{font-size:12.5px;color:var(--muted);margin:0}
@@ -380,8 +384,8 @@ body.touring #out>.hdr.tour-on,body.touring #out>.foot.tour-on{border-radius:8px
     <legend class="eyebrow">Birth</legend>
     <div class="field"><label for="f-name">Full birth name</label><input id="f-name" autocomplete="off" placeholder="As on your birth certificate"></div>
     <div class="row2">
-      <div class="field"><label for="f-date">Birth date</label><input id="f-date" type="date"></div>
-      <div class="field"><label for="f-time">Birth time</label><input id="f-time" type="time"></div>
+      <div class="field"><label for="f-date">Birth date</label><span class="dt empty" data-ph="Select a date"><input id="f-date" type="date"></span></div>
+      <div class="field"><label for="f-time">Birth time</label><span class="dt empty" data-ph="Select a time"><input id="f-time" type="time"></span></div>
     </div>
     <label class="check"><input id="f-unk" type="checkbox"> I don't know my birth time</label>
     <div class="field combo"><label for="f-city">Birth place</label>
@@ -714,7 +718,9 @@ fill('f-tz',[['LMT','Local mean time (births before standard time)'],...ZONES.ma
 const F=['name','date','time','unk','city','lat','lon','tz','moon','rising','type','auth','profile','enn'];
 const BIRTH=['date','time','unk','city','lat','lon','tz'];
 let isExample=true;
-const setF=(k,val)=>{const el=$('f-'+k);if(el.type==='checkbox')el.checked=!!val;else el.value=val??''};
+const dtMark=el=>{const w=el.parentNode;if(w&&w.classList&&w.classList.contains('dt'))w.classList.toggle('empty',!el.value)};
+const setF=(k,val)=>{const el=$('f-'+k);if(el.type==='checkbox')el.checked=!!val;else{el.value=val??'';dtMark(el)}};
+['f-date','f-time'].forEach(id=>{const el=$(id);['input','change','blur'].forEach(ev=>el.addEventListener(ev,()=>dtMark(el)))});
 function load(){let d=null;try{d=JSON.parse(localStorage.getItem(KEY))}catch(e){}
   isExample=false;if(d&&d.v)F.forEach(k=>setF(k,d.v[k]));else F.forEach(k=>setF(k,''));
   if(!$('f-tz').value)$('f-tz').value=LOCALTZ;
